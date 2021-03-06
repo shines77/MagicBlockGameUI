@@ -12,6 +12,9 @@ class CMainDlg : public CDialogImpl<CMainDlg>, public CUpdateUI<CMainDlg>,
 public:
 	enum { IDD = IDD_MAINDLG };
 
+    CMainDlg();
+    virtual ~CMainDlg();
+
 	virtual BOOL PreTranslateMessage(MSG * pMsg);
 	virtual BOOL OnIdle();
 
@@ -24,6 +27,8 @@ public:
 		COMMAND_ID_HANDLER(ID_APP_ABOUT, OnAppAbout)
 		COMMAND_ID_HANDLER(IDOK, OnOK)
 		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
+
+        MSG_WM_SHOWWINDOW(OnShowWindow)
 	END_MSG_MAP()
 
 // Handler prototypes (uncomment arguments if needed):
@@ -37,8 +42,11 @@ public:
 	LRESULT OnOK(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL & /*bHandled*/);
 	LRESULT OnCancel(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL & /*bHandled*/);
 
+    void OnShowWindow(BOOL bShow, UINT nStatus);
+
 	void CloseDialog(int nVal);
 
 private:
+    BOOL targetBoardShowOnce_;
     TargetBoardWnd * targetBoardWnd_;
 };

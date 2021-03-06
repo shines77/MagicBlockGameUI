@@ -8,6 +8,20 @@
 #include "AboutDlg.h"
 #include "MainDlg.h"
 
+CMainDlg::CMainDlg() : targetBoardShowOnce_(FALSE), targetBoardWnd_(NULL)
+{
+
+}
+
+CMainDlg::~CMainDlg()
+{
+    if (targetBoardWnd_ != NULL)
+    {
+        delete targetBoardWnd_;
+        targetBoardWnd_ = NULL;
+    }
+}
+
 BOOL CMainDlg::PreTranslateMessage(MSG * pMsg)
 {
 	return CWindow::IsDialogMessage(pMsg);
@@ -38,13 +52,37 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 
 	UIAddChildWindowContainer(m_hWnd);
 
-    targetBoardWnd_ = new TargetBoardWnd();
-
-    CRect rcTargetWnd = { 0, 0, 200, 200 };
-    targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("Target Board"), 0, 0);
-    targetBoardWnd_->ShowWindow(SW_NORMAL);
+    if (targetBoardWnd_ == NULL) {
+        targetBoardWnd_ = new TargetBoardWnd();
+        if (targetBoardWnd_ != NULL) {
+            CRect rcTargetWnd = { 0, 0, 200, 200 };
+            targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("Ä¿±ê"),
+                WS_CAPTION | WS_POPUP | WS_SYSMENU | WS_BORDER | WS_THICKFRAME,
+                WS_EX_CLIENTEDGE | WS_EX_TOOLWINDOW);
+        }
+    }
 
 	return TRUE;
+}
+
+void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+    if (!targetBoardShowOnce_ && targetBoardWnd_ != NULL) {
+        targetBoardShowOnce_ = TRUE;
+
+        CRect rcClient;
+        CPoint ptClient;
+        ::GetClientRect(this->m_hWnd, &rcClient);
+        ::ClientToScreen(this->m_hWnd, &ptClient);
+        rcClient.OffsetRect(ptClient);
+
+        CRect rcBoard;
+        ::GetClientRect(targetBoardWnd_->m_hWnd, &rcBoard);
+        targetBoardWnd_->SetWindowPos(NULL,
+            rcClient.right - rcBoard.Width() - 20, rcClient.top + 20,
+            rcClient.right - 20, rcClient.top + 20 + rcBoard.Height(),
+            SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
+    }
 }
 
 LRESULT CMainDlg::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL & /*bHandled*/)
@@ -52,7 +90,6 @@ LRESULT CMainDlg::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
     if (targetBoardWnd_ != NULL && targetBoardWnd_->m_hWnd != NULL)
     {
         targetBoardWnd_->DestroyWindow();
-        targetBoardWnd_ = NULL;
     }
 
 	// unregister message filtering and idle updates

@@ -15,20 +15,23 @@ TargetBoardWnd::~TargetBoardWnd()
 void TargetBoardWnd::OnFinalMessage(HWND hWnd)
 {
     CWindowImpl::OnFinalMessage(hWnd);
-    ::PostQuitMessage(0);
 }
 
-LRESULT TargetBoardWnd::OnCreate(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+int TargetBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
     return 0;
 }
 
-LRESULT TargetBoardWnd::OnDestroy(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
+void TargetBoardWnd::OnClose()
 {
-    PostQuitMessage(0);
-    return 0;
+    DestroyWindow();
 }
 
+void TargetBoardWnd::OnDestroy()
+{
+}
+
+/*
 LRESULT TargetBoardWnd::OnPaint(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 {
     PAINTSTRUCT ps;
@@ -37,4 +40,27 @@ LRESULT TargetBoardWnd::OnPaint(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & 
     TextOut(hDC, 0, 0, _T("Hello world"), 11);
     EndPaint(&ps);
     return 0;
+}
+//*/
+
+void TargetBoardWnd::DoPaint(CDCHandle dc)
+{
+    dc.SaveDC();
+    dc.TextOut(0, 0, _T("Hello world"), 11);
+    dc.RestoreDC(-1);
+}
+
+void TargetBoardWnd::OnLButtonDown(UINT nFlags, CPoint point)
+{
+    //
+}
+
+void TargetBoardWnd::OnLButtonUp(UINT nFlags, CPoint point)
+{
+    //
+}
+
+void TargetBoardWnd::OnMouseMove(UINT nFlags, CPoint point)
+{
+    //
 }
