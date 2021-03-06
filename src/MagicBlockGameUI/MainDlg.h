@@ -5,6 +5,7 @@
 #pragma once
 
 #include "TargetBoardWnd.h"
+#include "PlayerBoardWnd.h"
 
 class CMainDlg : public CDialogImpl<CMainDlg>, public CUpdateUI<CMainDlg>,
 		         public CMessageFilter, public CIdleHandler
@@ -48,5 +49,7 @@ public:
 
 private:
     BOOL                targetBoardShowOnce_;
+    BOOL                playerBoardShowOnce_;
     TargetBoardWnd *    targetBoardWnd_;
+    PlayerBoardWnd *    playerBoardWnd_;
 };

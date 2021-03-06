@@ -2,22 +2,22 @@
 #include "stdafx.h"
 #include "resource.h"
 
-#include "TargetBoardWnd.h"
+#include "PlayerBoardWnd.h"
 
-TargetBoardWnd::TargetBoardWnd()
+PlayerBoardWnd::PlayerBoardWnd()
 {
 }
 
-TargetBoardWnd::~TargetBoardWnd()
+PlayerBoardWnd::~PlayerBoardWnd()
 {
 }
 
-void TargetBoardWnd::OnFinalMessage(HWND hWnd)
+void PlayerBoardWnd::OnFinalMessage(HWND hWnd)
 {
     CWindowImpl::OnFinalMessage(hWnd);
 }
 
-int TargetBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
+int PlayerBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	// set icons
 	HICON hIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR,
@@ -30,33 +30,33 @@ int TargetBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
     return 0;
 }
 
-void TargetBoardWnd::OnClose()
+void PlayerBoardWnd::OnClose()
 {
     DestroyWindow();
 }
 
-void TargetBoardWnd::OnDestroy()
+void PlayerBoardWnd::OnDestroy()
 {
 }
 
-void TargetBoardWnd::DoPaint(CDCHandle dc)
+void PlayerBoardWnd::DoPaint(CDCHandle dc)
 {
     dc.SaveDC();
     dc.TextOut(0, 0, _T("Hello world"), 11);
     dc.RestoreDC(-1);
 }
 
-void TargetBoardWnd::OnLButtonDown(UINT nFlags, CPoint point)
+void PlayerBoardWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
     //
 }
 
-void TargetBoardWnd::OnLButtonUp(UINT nFlags, CPoint point)
+void PlayerBoardWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
     //
 }
 
-void TargetBoardWnd::OnMouseMove(UINT nFlags, CPoint point)
+void PlayerBoardWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
     //
 }

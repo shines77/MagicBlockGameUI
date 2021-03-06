@@ -8,9 +8,11 @@
 #include "AboutDlg.h"
 #include "MainDlg.h"
 
-CMainDlg::CMainDlg() : targetBoardShowOnce_(FALSE), targetBoardWnd_(NULL)
+CMainDlg::CMainDlg()
+    : targetBoardShowOnce_(FALSE), targetBoardWnd_(NULL),
+      playerBoardShowOnce_(FALSE), playerBoardWnd_(NULL)
 {
-
+    //
 }
 
 CMainDlg::~CMainDlg()
@@ -19,6 +21,12 @@ CMainDlg::~CMainDlg()
     {
         delete targetBoardWnd_;
         targetBoardWnd_ = NULL;
+    }
+
+    if (playerBoardWnd_ != NULL)
+    {
+        delete playerBoardWnd_;
+        playerBoardWnd_ = NULL;
     }
 }
 
@@ -39,9 +47,11 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	CenterWindow();
 
 	// set icons
-	HICON hIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
+	HICON hIcon = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR,
+        ::GetSystemMetrics(SM_CXICON), ::GetSystemMetrics(SM_CYICON));
 	SetIcon(hIcon, TRUE);
-	HICON hIconSmall = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR, ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
+	HICON hIconSmall = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR,
+        ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(hIconSmall, FALSE);
 
 	// register object for message filtering and idle updates
@@ -55,10 +65,22 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
     if (targetBoardWnd_ == NULL) {
         targetBoardWnd_ = new TargetBoardWnd();
         if (targetBoardWnd_ != NULL) {
-            CRect rcTargetWnd = { 0, 0, 200, 200 };
+            CRect rcTargetWnd = { 0, 0, 300, 300 };
             targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("Ä¿±ê"),
                 WS_CAPTION | WS_POPUP | WS_SYSMENU | WS_BORDER | WS_THICKFRAME,
-                WS_EX_CLIENTEDGE | WS_EX_TOOLWINDOW);
+                // WS_EX_TOOLWINDOW
+                WS_EX_CLIENTEDGE);
+        }
+    }
+
+    if (playerBoardWnd_ == NULL) {
+        playerBoardWnd_ = new PlayerBoardWnd();
+        if (playerBoardWnd_ != NULL) {
+            CRect rcPlayerWnd = { 0, 0, 500, 500 };
+            playerBoardWnd_->Create(this->m_hWnd, rcPlayerWnd, _T("Íæ¼ÒÆåÅÌ"),
+                WS_CAPTION | WS_POPUP | WS_SYSMENU | WS_BORDER | WS_THICKFRAME,
+                // WS_EX_TOOLWINDOW
+                WS_EX_CLIENTEDGE);
         }
     }
 
@@ -67,6 +89,12 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 
 void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 {
+    static const LONG nEdgeLeft = 30;
+    static const LONG nEdgeMiddle = 45;
+    static const LONG nEdgeRight = 30;
+    static const LONG nEdgeTop = 30;
+    static const LONG nEdgeTargetTop = 100;
+
     if (!targetBoardShowOnce_ && targetBoardWnd_ != NULL) {
         targetBoardShowOnce_ = TRUE;
 
@@ -78,10 +106,46 @@ void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 
         CRect rcBoard;
         ::GetClientRect(targetBoardWnd_->m_hWnd, &rcBoard);
+#if 1
         targetBoardWnd_->SetWindowPos(NULL,
-            rcClient.right - rcBoard.Width() - 20, rcClient.top + 20,
-            rcClient.right - 20, rcClient.top + 20 + rcBoard.Height(),
+            rcClient.left + nEdgeLeft,
+            rcClient.top + nEdgeTargetTop,
+            rcClient.left + nEdgeLeft + rcBoard.Width(),
+            rcClient.top + nEdgeTargetTop + rcBoard.Height(),
             SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
+#else
+        targetBoardWnd_->SetWindowPos(NULL,
+            rcClient.right - nEdgeRight - rcBoard.Width(),
+            rcClient.top + nEdgeTargetTop,
+            rcClient.right - nEdgeRight,
+            rcClient.top + nEdgeTargetTop + rcBoard.Height(),
+            SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
+#endif
+    }
+
+    if (!playerBoardShowOnce_ && playerBoardWnd_ != NULL) {
+        playerBoardShowOnce_ = TRUE;
+
+        CRect rcClient;
+        CPoint ptClient;
+        ::GetClientRect(this->m_hWnd, &rcClient);
+        ::ClientToScreen(this->m_hWnd, &ptClient);
+        rcClient.OffsetRect(ptClient);
+
+        CRect rcTarget;
+        ::GetClientRect(targetBoardWnd_->m_hWnd, &rcTarget);
+
+        CRect rcBoard;
+        ::GetClientRect(playerBoardWnd_->m_hWnd, &rcBoard);
+
+        playerBoardWnd_->SetWindowPos(NULL,
+            rcClient.left + nEdgeLeft + rcTarget.Width() + nEdgeMiddle,
+            rcClient.top + nEdgeTop,
+            rcClient.left + nEdgeLeft + rcTarget.Width() + nEdgeMiddle + rcBoard.Width(),
+            rcClient.top + nEdgeTop + rcBoard.Height(),
+            SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
+
+        playerBoardWnd_->SetActiveWindow();
     }
 }
 
@@ -90,6 +154,11 @@ LRESULT CMainDlg::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
     if (targetBoardWnd_ != NULL && targetBoardWnd_->m_hWnd != NULL)
     {
         targetBoardWnd_->DestroyWindow();
+    }
+
+    if (playerBoardWnd_ != NULL && playerBoardWnd_->m_hWnd != NULL)
+    {
+        playerBoardWnd_->DestroyWindow();
     }
 
 	// unregister message filtering and idle updates
