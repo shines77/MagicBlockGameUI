@@ -53,5 +53,14 @@
     <Image Include="..\..\..\src\MagicBlockGameUI\res\MagicBlockGameUI.ico">
       <Filter>res</Filter>
     </Image>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Board_BG_3x3.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Board_BG_5x5.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Grid_Colors.bmp">
+      <Filter>res</Filter>
+    </Image>
   </ItemGroup>
 </Project>

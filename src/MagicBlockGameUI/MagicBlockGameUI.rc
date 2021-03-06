@@ -131,6 +131,28 @@ END
 
 
 /////////////////////////////////////////////////////////////////////////////
+// 中文(简体，中国) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
+LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
+#pragma code_page(936)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_BITMAP_BOARD_BG_3x3 BITMAP                  "res\\Board_BG_3x3.bmp"
+
+IDB_BITMAP_BOARD_BG_5x5 BITMAP                  "res\\Board_BG_5x5.bmp"
+
+IDB_BITMAP_GRID_COLORS  BITMAP                  "res\\Grid_Colors.bmp"
+
+#endif    // 中文(简体，中国) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
 // 英语(美国) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)

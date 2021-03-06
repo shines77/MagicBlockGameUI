@@ -228,6 +228,9 @@
     <ResourceCompile Include="..\..\..\src\MagicBlockGameUI\MagicBlockGameUI.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Board_BG_3x3.bmp" />
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Board_BG_5x5.bmp" />
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Grid_Colors.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\MagicBlockGameUI.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

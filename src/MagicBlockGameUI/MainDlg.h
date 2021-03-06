@@ -47,6 +47,6 @@ public:
 	void CloseDialog(int nVal);
 
 private:
-    BOOL targetBoardShowOnce_;
-    TargetBoardWnd * targetBoardWnd_;
+    BOOL                targetBoardShowOnce_;
+    TargetBoardWnd *    targetBoardWnd_;
 };
