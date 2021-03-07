@@ -65,11 +65,10 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
     if (targetBoardWnd_ == NULL) {
         targetBoardWnd_ = new TargetBoardWnd();
         if (targetBoardWnd_ != NULL) {
-            CRect rcTargetWnd = { 0, 0, 300, 300 };
+            CRect rcTargetWnd = { 0, 0, 300, 320 };
             targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("Ä¿±ê"),
-                WS_CAPTION | WS_POPUP | WS_SYSMENU | WS_BORDER | WS_THICKFRAME,
-                // WS_EX_TOOLWINDOW
-                WS_EX_CLIENTEDGE);
+                WS_CHILDWINDOW | WS_CAPTION | WS_SYSMENU | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                WS_EX_WINDOWEDGE);
         }
     }
 
@@ -78,9 +77,8 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
         if (playerBoardWnd_ != NULL) {
             CRect rcPlayerWnd = { 0, 0, 500, 500 };
             playerBoardWnd_->Create(this->m_hWnd, rcPlayerWnd, _T("Íæ¼ÒÆåÅÌ"),
-                WS_CAPTION | WS_POPUP | WS_SYSMENU | WS_BORDER | WS_THICKFRAME,
-                // WS_EX_TOOLWINDOW
-                WS_EX_CLIENTEDGE);
+                WS_CHILDWINDOW | WS_CAPTION | WS_SYSMENU | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                WS_EX_WINDOWEDGE);
         }
     }
 
@@ -102,25 +100,16 @@ void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
         CPoint ptClient;
         ::GetClientRect(this->m_hWnd, &rcClient);
         ::ClientToScreen(this->m_hWnd, &ptClient);
-        rcClient.OffsetRect(ptClient);
+        //rcClient.OffsetRect(ptClient);
 
         CRect rcBoard;
         ::GetClientRect(targetBoardWnd_->m_hWnd, &rcBoard);
-#if 1
         targetBoardWnd_->SetWindowPos(NULL,
             rcClient.left + nEdgeLeft,
             rcClient.top + nEdgeTargetTop,
             rcClient.left + nEdgeLeft + rcBoard.Width(),
             rcClient.top + nEdgeTargetTop + rcBoard.Height(),
             SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
-#else
-        targetBoardWnd_->SetWindowPos(NULL,
-            rcClient.right - nEdgeRight - rcBoard.Width(),
-            rcClient.top + nEdgeTargetTop,
-            rcClient.right - nEdgeRight,
-            rcClient.top + nEdgeTargetTop + rcBoard.Height(),
-            SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
-#endif
     }
 
     if (!playerBoardShowOnce_ && playerBoardWnd_ != NULL) {
@@ -130,7 +119,7 @@ void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
         CPoint ptClient;
         ::GetClientRect(this->m_hWnd, &rcClient);
         ::ClientToScreen(this->m_hWnd, &ptClient);
-        rcClient.OffsetRect(ptClient);
+        //rcClient.OffsetRect(ptClient);
 
         CRect rcTarget;
         ::GetClientRect(targetBoardWnd_->m_hWnd, &rcTarget);

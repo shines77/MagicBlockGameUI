@@ -1,9 +1,17 @@
 #pragma once
 
+#include <stdint.h>
+#include <stddef.h>
+
+#include "Board.h"
+
 class PlayerBoardWnd : public CWindowImpl<PlayerBoardWnd>,
                        public CDoubleBufferImpl<PlayerBoardWnd>
 {
 public:
+    static const UINT BoardX = 5;
+    static const UINT BoardY = 5;
+
     PlayerBoardWnd();
     ~PlayerBoardWnd();
 
@@ -11,19 +19,22 @@ public:
    DECLARE_WND_CLASS(_T("PlayerBoardWnd"));
 
    BEGIN_MSG_MAP(PlayerBoardWnd)
-       CHAIN_MSG_MAP(CDoubleBufferImpl<PlayerBoardWnd>)
-
        //MESSAGE_HANDLER(WM_CREATE, OnCreate)
        //MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
        //MESSAGE_HANDLER(WM_PAINT, OnPaint)
+       //MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBackground)
 
        MSG_WM_CREATE(OnCreate)
        MSG_WM_DESTROY(OnDestroy)
        MSG_WM_CLOSE(OnClose)
 
+       //MSG_WM_ERASEBKGND(OnEraseBackground)
+
        MSG_WM_LBUTTONDOWN(OnLButtonDown)
        MSG_WM_LBUTTONUP(OnLButtonUp)
        MSG_WM_MOUSEMOVE(OnMouseMove)
+
+       CHAIN_MSG_MAP(CDoubleBufferImpl<PlayerBoardWnd>)
    END_MSG_MAP()
 
    virtual void OnFinalMessage(HWND hWnd);
@@ -31,15 +42,33 @@ public:
    //LRESULT OnCreate(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
    //LRESULT OnDestroy(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
    //LRESULT OnPaint(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
+   LRESULT OnEraseBackground2(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled);
 
    int OnCreate(LPCREATESTRUCT lpCreateStruct);
    void OnClose();
    void OnDestroy();
 
+   BOOL OnEraseBkgnd(CDCHandle dc);
    void DoPaint(CDCHandle dc);
 
    void OnLButtonDown(UINT nFlags, CPoint point);
    void OnLButtonUp(UINT nFlags, CPoint point);
 
    void OnMouseMove(UINT nFlags, CPoint point);
+
+   void PaintBoardGrid(CDCHandle & dc, CDC & dcMem, CPoint & ptBoardBg,
+                       UINT x, UINT y, UINT grid);
+
+private:
+    HBRUSH m_hBrushBG;
+
+    CDC m_dcMem;
+
+    CBitmapHandle m_bmpBoardBg;
+    CBitmapHandle m_bmpGridColors;
+
+    CSize m_szBoardBg;
+    CSize m_szGridColors;
+
+    Board<BoardX, BoardY> m_board;
 };

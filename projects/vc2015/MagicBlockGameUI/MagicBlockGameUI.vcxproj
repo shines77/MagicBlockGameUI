@@ -220,6 +220,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\AboutDlg.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\Board.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\MainDlg.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\PlayerBoardWnd.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\resource.h" />

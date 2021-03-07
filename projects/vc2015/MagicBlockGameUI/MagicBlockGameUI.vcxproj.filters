@@ -49,6 +49,9 @@
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\PlayerBoardWnd.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\Board.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\MagicBlockGameUI\MagicBlockGameUI.rc">
