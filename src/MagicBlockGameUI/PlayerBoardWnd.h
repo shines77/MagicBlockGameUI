@@ -11,7 +11,7 @@ class PlayerBoardWnd : public CWindowImpl<PlayerBoardWnd>,
                        public CDoubleBufferImpl<PlayerBoardWnd>
 {
 public:
-    PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData) noexcept;
+    PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData);
     ~PlayerBoardWnd();
 
    // Optionally specify name of the new Windows class

@@ -7,11 +7,15 @@
 #include "Color.h"
 #include "Board.h"
 
+#define ID_BTN_RANDOM_GEN       0
+#define ID_BTN_USER_CUSTOMIZE   1
+#define ID_BTN_IMPORT_STRING    2
+
 class TargetBoardWnd : public CWindowImpl<TargetBoardWnd>,
                        public CDoubleBufferImpl<TargetBoardWnd>
 {
 public:
-    TargetBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData) noexcept;
+    TargetBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData);
     ~TargetBoardWnd();
 
    // Optionally specify name of the new Windows class
@@ -22,6 +26,7 @@ public:
        //MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
        //MESSAGE_HANDLER(WM_PAINT, OnPaint)
        //MESSAGE_HANDLER(WM_ERASEBKGND, OnEraseBackground)
+       MSG_WM_SHOWWINDOW(OnShowWindow)
 
        MSG_WM_CREATE(OnCreate)
        MSG_WM_DESTROY(OnDestroy)
@@ -50,6 +55,7 @@ public:
    void OnDestroy();
 
    void OnActivate(UINT nState, BOOL bMinimized, CWindow wndOther);
+   void OnShowWindow(BOOL bShow, UINT nStatus);
    void OnMove(CPoint ptPos);
 
    BOOL OnEraseBkgnd(CDCHandle dc);
@@ -75,11 +81,13 @@ private:
     CSize m_szBoardBg;
     CSize m_szGridColors;
 
+    CFont m_btnFont;
+
     CButton m_btnRandomGen;
     CButton m_btnUserCustomize;
     CButton m_btnImportString;
 
-    CEdit m_txtTargetString;
+    CEdit m_editTargetString;
 
     HBRUSH m_hBrushBG;
     DWORD m_dwLastBringTick;

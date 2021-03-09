@@ -2,9 +2,11 @@
 #include "stdafx.h"
 #include "resource.h"
 
+#include <string.h>
+
 #include "TargetBoardWnd.h"
 
-TargetBoardWnd::TargetBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData) noexcept
+TargetBoardWnd::TargetBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData)
     : m_pData(pData), m_hBrushBG(NULL), m_dwLastBringTick(0)
 {
     m_bmpBoardBg.LoadBitmap(IDB_BITMAP_BOARD_BG_3x3);
@@ -40,6 +42,8 @@ TargetBoardWnd::~TargetBoardWnd()
     m_bmpGridColors.DeleteObject();
     m_bmpBoardBg.DeleteObject();
 
+    m_btnFont.DeleteObject();
+
     m_dcMem.DeleteDC();
 }
 
@@ -62,12 +66,15 @@ int TargetBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
         m_hBrushBG = CreateSolidBrush(::GetSysColor(COLOR_BTNFACE));
     }
 
+    ShowWindow(SW_SHOWNORMAL);
+
     return 0;
 }
 
 void TargetBoardWnd::OnClose()
 {
-    DestroyWindow();
+    //DestroyWindow();
+    ShowWindow(SW_HIDE);
 }
 
 void TargetBoardWnd::OnDestroy()
@@ -88,6 +95,79 @@ void TargetBoardWnd::OnActivate(UINT nState, BOOL bMinimized, CWindow wndOther)
     }
     else if (nState == WA_INACTIVE) {
         ::SetWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+    }
+}
+
+void TargetBoardWnd::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+    CRect rcWin;
+    GetClientRect(&rcWin);
+
+    CPoint ptBoardBg;
+    ptBoardBg.x = (rcWin.Width() - m_szBoardBg.cx) / 2;
+    ptBoardBg.y = 20;
+    if (ptBoardBg.x < 0)
+        ptBoardBg.x = 0;
+    if (ptBoardBg.y < 0)
+        ptBoardBg.y = 0;
+
+    if (m_btnFont.m_hFont == NULL) {
+        int nFontSize = 9;
+        int PixelsY = ::GetDeviceCaps(this->GetDC(), LOGPIXELSY);
+        int nPointSize = int((nFontSize / 96.0) * PixelsY * 10);
+        m_btnFont.CreatePointFont(nPointSize, _T("宋体"), this->GetDC());
+    }
+
+    DWORD dwBtnStyle = WS_CHILD | WS_GROUP | WS_TABSTOP;
+
+    if (m_btnRandomGen.m_hWnd == NULL) {
+        CRect rcBtn(0, 0, 60, 30);
+        m_btnRandomGen.Create(m_hWnd, &rcBtn, _T("随机"), dwBtnStyle, 0);
+        m_btnRandomGen.SetFont(m_btnFont.m_hFont);
+    }
+    if (m_btnUserCustomize.m_hWnd == NULL) {
+        CRect rcBtn(0, 0, 70, 30);
+        m_btnUserCustomize.Create(m_hWnd, &rcBtn, _T("自定义"), dwBtnStyle, 0);
+        m_btnUserCustomize.SetFont(m_btnFont.m_hFont);
+    }
+    if (m_btnImportString.m_hWnd == NULL) {
+        CRect rcBtn(0, 0, 100, 30);
+        m_btnImportString.Create(m_hWnd, &rcBtn, _T("从字符串导入"), dwBtnStyle, 0);
+        m_btnImportString.SetFont(m_btnFont.m_hFont);
+    }
+
+    CPoint ptMove;
+    CRect rcBtn1;
+    if (m_btnRandomGen.m_hWnd != NULL) {
+        m_btnRandomGen.GetWindowRect(&rcBtn1);
+        rcBtn1.OffsetRect(-rcBtn1.left, -rcBtn1.top);
+        ptMove.x = ptBoardBg.x + 10;
+        ptMove.y = ptBoardBg.y + m_szBoardBg.cy + 20;
+        rcBtn1.OffsetRect(ptMove);
+        m_btnRandomGen.MoveWindow(&rcBtn1, TRUE);
+        m_btnRandomGen.ShowWindow(SW_SHOWNORMAL);
+    }
+
+    CRect rcBtn2;
+    if (m_btnUserCustomize.m_hWnd != NULL) {
+        m_btnUserCustomize.GetWindowRect(&rcBtn2);
+        rcBtn2.OffsetRect(-rcBtn2.left, -rcBtn2.top);
+        ptMove.x = rcBtn1.right + 10;
+        ptMove.y = ptBoardBg.y + m_szBoardBg.cy + 20;
+        rcBtn2.OffsetRect(ptMove);
+        m_btnUserCustomize.MoveWindow(&rcBtn2, TRUE);
+        m_btnUserCustomize.ShowWindow(SW_SHOWNORMAL);
+    }
+
+    CRect rcBtn3;
+    if (m_btnImportString.m_hWnd != NULL) {
+        m_btnImportString.GetWindowRect(&rcBtn3);
+        rcBtn3.OffsetRect(-rcBtn3.left, -rcBtn3.top);
+        ptMove.x = rcBtn2.right + 10;
+        ptMove.y = ptBoardBg.y + m_szBoardBg.cy + 20;
+        rcBtn3.OffsetRect(ptMove);
+        m_btnImportString.MoveWindow(&rcBtn3, TRUE);
+        m_btnImportString.ShowWindow(SW_SHOWNORMAL);
     }
 }
 
@@ -127,7 +207,8 @@ void TargetBoardWnd::DoPaint(CDCHandle dc)
 
     CPoint ptBoardBg;
     ptBoardBg.x = (rcWin.Width() - m_szBoardBg.cx) / 2;
-    ptBoardBg.y = (rcWin.Height() - m_szBoardBg.cy) / 2;
+    //ptBoardBg.y = (rcWin.Height() - m_szBoardBg.cy) / 2;
+    ptBoardBg.y = 20;
     if (ptBoardBg.x < 0)
         ptBoardBg.x = 0;
     if (ptBoardBg.y < 0)

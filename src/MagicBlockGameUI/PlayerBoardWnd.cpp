@@ -4,7 +4,7 @@
 
 #include "PlayerBoardWnd.h"
 
-PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData) noexcept
+PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData)
     : m_pData(pData), m_hBrushBG(NULL), m_dwLastBringTick(0)
 {
     m_bmpBoardBg.LoadBitmap(IDB_BITMAP_BOARD_BG_5x5);
@@ -79,7 +79,8 @@ int PlayerBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void PlayerBoardWnd::OnClose()
 {
-    DestroyWindow();
+    //DestroyWindow();
+    ShowWindow(SW_HIDE);
 }
 
 void PlayerBoardWnd::OnDestroy()
