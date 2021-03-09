@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "SharedData.h"
+
 #include "TargetBoardWnd.h"
 #include "PlayerBoardWnd.h"
 
@@ -52,4 +54,6 @@ private:
     BOOL                playerBoardShowOnce_;
     TargetBoardWnd *    targetBoardWnd_;
     PlayerBoardWnd *    playerBoardWnd_;
+
+    SharedData<BoardX, BoardY, TargetX, TargetY> m_data;
 };

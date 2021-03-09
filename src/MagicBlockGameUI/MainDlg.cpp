@@ -62,8 +62,10 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 
 	UIAddChildWindowContainer(m_hWnd);
 
+    this->m_data.parent = m_hWnd;
+
     if (targetBoardWnd_ == NULL) {
-        targetBoardWnd_ = new TargetBoardWnd();
+        targetBoardWnd_ = new TargetBoardWnd(&this->m_data);
         if (targetBoardWnd_ != NULL) {
             CRect rcTargetWnd = { 0, 0, 300, 420 };
             targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("Ä¿±ê"),
@@ -74,7 +76,7 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
     }
 
     if (playerBoardWnd_ == NULL) {
-        playerBoardWnd_ = new PlayerBoardWnd();
+        playerBoardWnd_ = new PlayerBoardWnd(&this->m_data);
         if (playerBoardWnd_ != NULL) {
             CRect rcPlayerWnd = { 0, 0, 500, 600 };
             playerBoardWnd_->Create(this->m_hWnd, rcPlayerWnd, _T("Íæ¼ÒÆåÅÌ"),
@@ -99,10 +101,7 @@ void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
         targetBoardShowOnce_ = TRUE;
 
         CRect rcClient;
-        CPoint ptClient;
         ::GetClientRect(this->m_hWnd, &rcClient);
-        ::ClientToScreen(this->m_hWnd, &ptClient);
-        //rcClient.OffsetRect(ptClient);
 
         CRect rcBoard;
         ::GetClientRect(targetBoardWnd_->m_hWnd, &rcBoard);
@@ -118,10 +117,7 @@ void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
         playerBoardShowOnce_ = TRUE;
 
         CRect rcClient;
-        CPoint ptClient;
         ::GetClientRect(this->m_hWnd, &rcClient);
-        ::ClientToScreen(this->m_hWnd, &ptClient);
-        //rcClient.OffsetRect(ptClient);
 
         CRect rcTarget;
         ::GetClientRect(targetBoardWnd_->m_hWnd, &rcTarget);

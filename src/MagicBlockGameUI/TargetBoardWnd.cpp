@@ -4,8 +4,8 @@
 
 #include "TargetBoardWnd.h"
 
-TargetBoardWnd::TargetBoardWnd()
-    : m_hBrushBG(NULL), m_dwLastBringTick(0)
+TargetBoardWnd::TargetBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData) noexcept
+    : m_pData(pData), m_hBrushBG(NULL), m_dwLastBringTick(0)
 {
     m_bmpBoardBg.LoadBitmap(IDB_BITMAP_BOARD_BG_3x3);
     m_bmpGridColors.LoadBitmap(IDB_BITMAP_GRID_COLORS);
@@ -22,10 +22,10 @@ TargetBoardWnd::TargetBoardWnd()
         m_szGridColors.cy = 0;
     }
 
-    for (UINT y = 0; y < BoardY; y++) {
-        for (UINT x = 0; x < BoardX; x++) {
+    for (UINT y = 0; y < TargetY; y++) {
+        for (UINT x = 0; x < TargetX; x++) {
             UINT grid = (rand() % 6) + 1;
-            m_board.setGrid(x, y, grid);
+            m_pData->targetBoard.setGrid(x, y, grid);
         }
     }
 }
@@ -182,9 +182,9 @@ void TargetBoardWnd::DoPaint(CDCHandle dc)
         if (m_dcMem.m_hDC != NULL) {
             HBITMAP hBitmapOld = m_dcMem.SelectBitmap(m_bmpGridColors.m_hBitmap);
             if (hBitmapOld != NULL) {
-                for (UINT y = 0; y < BoardY; y++) {
-                    for (UINT x = 0; x < BoardX; x++) {
-                        UINT grid = m_board.getGrid(x, y);
+                for (UINT y = 0; y < TargetY; y++) {
+                    for (UINT x = 0; x < TargetX; x++) {
+                        UINT grid = m_pData->targetBoard.getGrid(x, y);
                         if (grid >= 0 && grid < 7) {
                             PaintBoardGrid(dc, m_dcMem, ptBoardBg, x, y, grid);
                         }

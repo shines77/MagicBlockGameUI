@@ -3,16 +3,15 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include "SharedData.h"
+#include "Color.h"
 #include "Board.h"
 
 class PlayerBoardWnd : public CWindowImpl<PlayerBoardWnd>,
                        public CDoubleBufferImpl<PlayerBoardWnd>
 {
 public:
-    static const UINT BoardX = 5;
-    static const UINT BoardY = 5;
-
-    PlayerBoardWnd();
+    PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData) noexcept;
     ~PlayerBoardWnd();
 
    // Optionally specify name of the new Windows class
@@ -66,17 +65,16 @@ protected:
                        UINT x, UINT y, UINT grid);
 
 private:
-    HBRUSH m_hBrushBG;
+    SharedData<BoardX, BoardY, TargetX, TargetY> * m_pData;
 
     CDC m_dcMem;
 
-    CBitmapHandle m_bmpBoardBg;
-    CBitmapHandle m_bmpGridColors;
+    CBitmap m_bmpBoardBg;
+    CBitmap m_bmpGridColors;
 
     CSize m_szBoardBg;
     CSize m_szGridColors;
 
-    Board<BoardX, BoardY> m_board;
-
+    HBRUSH m_hBrushBG;
     DWORD m_dwLastBringTick;
 };

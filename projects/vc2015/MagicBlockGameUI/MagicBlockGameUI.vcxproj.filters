@@ -52,6 +52,15 @@
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Board.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\SharedData.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\BoardString.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\Color.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\MagicBlockGameUI\MagicBlockGameUI.rc">

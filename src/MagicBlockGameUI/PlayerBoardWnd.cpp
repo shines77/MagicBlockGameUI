@@ -4,8 +4,8 @@
 
 #include "PlayerBoardWnd.h"
 
-PlayerBoardWnd::PlayerBoardWnd()
-    : m_hBrushBG(NULL), m_dwLastBringTick(0)
+PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData) noexcept
+    : m_pData(pData), m_hBrushBG(NULL), m_dwLastBringTick(0)
 {
     m_bmpBoardBg.LoadBitmap(IDB_BITMAP_BOARD_BG_5x5);
     m_bmpGridColors.LoadBitmap(IDB_BITMAP_GRID_COLORS);
@@ -24,10 +24,22 @@ PlayerBoardWnd::PlayerBoardWnd()
 
     for (UINT y = 0; y < BoardY; y++) {
         for (UINT x = 0; x < BoardX; x++) {
-            UINT grid = (rand() % 6) + 1;
-            m_board.setGrid(x, y, grid);
+            UINT pos = y * BoardY + x;
+            if (pos < (BoardY * BoardY)) {
+                UINT grid = Color::strToColor(DefaultPlayerBoard[pos]);
+                m_pData->playerBoard.setGrid(x, y, grid);
+            }
         }
     }
+
+#if 0
+    for (UINT y = 0; y < BoardY; y++) {
+        for (UINT x = 0; x < BoardX; x++) {
+            UINT grid = (rand() % 6) + 1;
+            m_pData->playerBoard.setGrid(x, y, grid);
+        }
+    }
+#endif
 }
 
 PlayerBoardWnd::~PlayerBoardWnd()
@@ -184,7 +196,7 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
             if (hBitmapOld != NULL) {
                 for (UINT y = 0; y < BoardY; y++) {
                     for (UINT x = 0; x < BoardX; x++) {
-                        UINT grid = m_board.getGrid(x, y);
+                        UINT grid = m_pData->playerBoard.getGrid(x, y);
                         if (grid >= 0 && grid < 7) {
                             PaintBoardGrid(dc, m_dcMem, ptBoardBg, x, y, grid);
                         }
