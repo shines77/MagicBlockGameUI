@@ -65,20 +65,22 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
     if (targetBoardWnd_ == NULL) {
         targetBoardWnd_ = new TargetBoardWnd();
         if (targetBoardWnd_ != NULL) {
-            CRect rcTargetWnd = { 0, 0, 300, 320 };
+            CRect rcTargetWnd = { 0, 0, 300, 420 };
             targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("Ä¿±ê"),
-                WS_CHILDWINDOW | WS_CAPTION | WS_SYSMENU | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-                WS_EX_WINDOWEDGE);
+                WS_CHILDWINDOW | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_BORDER |
+                WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                WS_EX_CLIENTEDGE);
         }
     }
 
     if (playerBoardWnd_ == NULL) {
         playerBoardWnd_ = new PlayerBoardWnd();
         if (playerBoardWnd_ != NULL) {
-            CRect rcPlayerWnd = { 0, 0, 500, 500 };
+            CRect rcPlayerWnd = { 0, 0, 500, 600 };
             playerBoardWnd_->Create(this->m_hWnd, rcPlayerWnd, _T("Íæ¼ÒÆåÅÌ"),
-                WS_CHILDWINDOW | WS_CAPTION | WS_SYSMENU | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-                WS_EX_WINDOWEDGE);
+                WS_CHILDWINDOW | WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_BORDER |
+                WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                WS_EX_CLIENTEDGE);
         }
     }
 
@@ -134,7 +136,7 @@ void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
             rcClient.top + nEdgeTop + rcBoard.Height(),
             SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
 
-        playerBoardWnd_->SetActiveWindow();
+        //playerBoardWnd_->SetActiveWindow();
     }
 }
 

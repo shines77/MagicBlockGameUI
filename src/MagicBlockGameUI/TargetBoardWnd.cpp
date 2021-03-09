@@ -5,7 +5,7 @@
 #include "TargetBoardWnd.h"
 
 TargetBoardWnd::TargetBoardWnd()
-    : m_hBrushBG(NULL)
+    : m_hBrushBG(NULL), m_dwLastBringTick(0)
 {
     m_bmpBoardBg.LoadBitmap(IDB_BITMAP_BOARD_BG_3x3);
     m_bmpGridColors.LoadBitmap(IDB_BITMAP_GRID_COLORS);
@@ -74,6 +74,32 @@ void TargetBoardWnd::OnDestroy()
 {
 }
 
+void TargetBoardWnd::OnActivate(UINT nState, BOOL bMinimized, CWindow wndOther)
+{
+    if ((nState == WA_ACTIVE && !bMinimized) || (nState == WA_CLICKACTIVE)) {
+        DWORD dwExStyle = ::GetWindowLong(m_hWnd, GWL_EXSTYLE);
+        ::SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+        if (!((dwExStyle & WS_EX_TOPMOST) == WS_EX_TOPMOST))
+        {
+            ::SetWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+        }
+        this->BringWindowToTop();
+        SetFocus();
+    }
+    else if (nState == WA_INACTIVE) {
+        ::SetWindowPos(m_hWnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+    }
+}
+
+void TargetBoardWnd::OnMove(CPoint ptPos)
+{
+    DWORD dwTickCount = GetTickCount();
+    if ((dwTickCount - m_dwLastBringTick) > 300) {
+        this->BringWindowToTop();
+        m_dwLastBringTick = GetTickCount();
+    }
+}
+
 LRESULT TargetBoardWnd::OnEraseBackground2(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
 {
 	this->SetMsgHandled(TRUE);
@@ -91,7 +117,7 @@ BOOL TargetBoardWnd::OnEraseBkgnd(CDCHandle dc)
     if (m_hBrushBG != NULL) {
         dc.FillRect(&rcWin, m_hBrushBG);
     }
-    return TRUE;
+    return FALSE;
 }
 
 void TargetBoardWnd::DoPaint(CDCHandle dc)

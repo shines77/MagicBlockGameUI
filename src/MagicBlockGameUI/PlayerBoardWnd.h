@@ -29,6 +29,8 @@ public:
        MSG_WM_CLOSE(OnClose)
 
        //MSG_WM_ERASEBKGND(OnEraseBackground)
+       MSG_WM_ACTIVATE(OnActivate)
+       MSG_WM_MOVE(OnMove)
 
        MSG_WM_LBUTTONDOWN(OnLButtonDown)
        MSG_WM_LBUTTONUP(OnLButtonUp)
@@ -48,6 +50,9 @@ public:
    void OnClose();
    void OnDestroy();
 
+   void OnActivate(UINT nState, BOOL bMinimized, CWindow wndOther);
+   void OnMove(CPoint ptPos);
+
    BOOL OnEraseBkgnd(CDCHandle dc);
    void DoPaint(CDCHandle dc);
 
@@ -56,6 +61,7 @@ public:
 
    void OnMouseMove(UINT nFlags, CPoint point);
 
+protected:
    void PaintBoardGrid(CDCHandle & dc, CDC & dcMem, CPoint & ptBoardBg,
                        UINT x, UINT y, UINT grid);
 
@@ -71,4 +77,6 @@ private:
     CSize m_szGridColors;
 
     Board<BoardX, BoardY> m_board;
+
+    DWORD m_dwLastBringTick;
 };
