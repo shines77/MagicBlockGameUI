@@ -6,6 +6,7 @@
 #include "SharedData.h"
 #include "Color.h"
 #include "Board.h"
+#include "Scale9Sprite.h"
 
 #define ID_BTN_RANDOM_GEN       0
 #define ID_BTN_USER_CUSTOMIZE   1
@@ -77,17 +78,21 @@ private:
 
     CBitmap m_bmpBoardBg;
     CBitmap m_bmpGridColors;
+    CBitmap m_bmpScale9PSprite;
 
     CSize m_szBoardBg;
     CSize m_szGridColors;
 
     CFont m_btnFont;
+    CFont m_editFont;
 
     CButton m_btnRandomGen;
     CButton m_btnUserCustomize;
     CButton m_btnImportString;
 
     CEdit m_editTargetString;
+
+    Scale9Sprite m_scale9PSprite;
 
     HBRUSH m_hBrushBG;
     DWORD m_dwLastBringTick;

@@ -11,6 +11,10 @@
 #define _WIN32_IE       0x0600
 #define _RICHEDIT_VER   0x0300
 
+#ifndef NO_MINMAX
+#define NO_MINMAX
+#endif
+
 #ifndef STRICT
 #define STRICT
 #endif

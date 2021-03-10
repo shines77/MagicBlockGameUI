@@ -61,6 +61,12 @@
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Color.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\CSkinToolWnd.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\Scale9Sprite.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\MagicBlockGameUI\MagicBlockGameUI.rc">
@@ -78,6 +84,12 @@
       <Filter>res</Filter>
     </Image>
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Grid_Colors.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Button_Scale9Sprite_Dark.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Button_Scale9Sprite_Gray.bmp">
       <Filter>res</Filter>
     </Image>
   </ItemGroup>

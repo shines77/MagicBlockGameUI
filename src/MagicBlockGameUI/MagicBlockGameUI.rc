@@ -148,6 +148,10 @@ IDB_BITMAP_BOARD_BG_5x5 BITMAP                  "res\\Board_BG_5x5.bmp"
 
 IDB_BITMAP_GRID_COLORS  BITMAP                  "res\\Grid_Colors.bmp"
 
+IDB_BITMAP_BTN_SCALE9PSPRITE_DARK BITMAP                  "res\\Button_Scale9Sprite_Dark.bmp"
+
+IDB_BITMAP_BTN_SCALE9PSPRITE_GRAY BITMAP                  "res\\Button_Scale9Sprite_Gray.bmp"
+
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

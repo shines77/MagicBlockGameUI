@@ -6,6 +6,7 @@
 #include "SharedData.h"
 #include "Color.h"
 #include "Board.h"
+#include "Scale9Sprite.h"
 
 class PlayerBoardWnd : public CWindowImpl<PlayerBoardWnd>,
                        public CDoubleBufferImpl<PlayerBoardWnd>
@@ -71,9 +72,12 @@ private:
 
     CBitmap m_bmpBoardBg;
     CBitmap m_bmpGridColors;
+    CBitmap m_bmpScale9PSprite;
 
     CSize m_szBoardBg;
     CSize m_szGridColors;
+
+    Scale9Sprite m_scale9PSprite;
 
     HBRUSH m_hBrushBG;
     DWORD m_dwLastBringTick;
