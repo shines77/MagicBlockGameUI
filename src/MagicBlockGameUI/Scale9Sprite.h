@@ -84,11 +84,11 @@ public:
         this->hBrushBG_ = ::CreateSolidBrush(bgColor);
     }
 
-    void Draw9PalaceBG(CDC & dc, CRect & rect) {
-        this->Draw9PalaceBG(dc.m_hDC, rect);
+    void DrawBackgroud(CDC & dc, CRect & rect) {
+        this->DrawBackgroud(dc.m_hDC, rect);
     }
 
-    void Draw9PalaceBG(CDCHandle dc, CRect & rect) {
+    void DrawBackgroud(CDCHandle dc, CRect & rect) {
         if (this->sprite_.m_hBitmap != NULL) {
             if (dc.m_hDC != NULL) {
                 if (this->bgColor_ != kDefaultBGColor) {
@@ -100,15 +100,15 @@ public:
         }
     }
 
-    void Draw9Palace(CDC & dc, CDC & dcMem, CRect & rect) {
-        this->Draw9Palace(dc.m_hDC, dcMem.m_hDC, rect);
+    void DrawFrame(CDC & dc, CDC & dcMem, CRect & rect) {
+        this->DrawFrame(dc.m_hDC, dcMem.m_hDC, rect);
     }
 
-    void Draw9Palace(CDCHandle dc, CDC & dcMem, CRect & rect) {
-        this->Draw9Palace(dc, dcMem.m_hDC, rect);
+    void DrawFrame(CDCHandle dc, CDC & dcMem, CRect & rect) {
+        this->DrawFrame(dc, dcMem.m_hDC, rect);
     }
 
-    void Draw9Palace(CDCHandle dc, CDCHandle dcMem, CRect & rect) {
+    void DrawFrame(CDCHandle dc, CDCHandle dcMem, CRect & rect) {
         if (this->sprite_.m_hBitmap != NULL) {
             if (dc.m_hDC != NULL && dcMem.m_hDC != NULL) {
                 HBITMAP hBitmapOld = dcMem.SelectBitmap(this->sprite_.m_hBitmap);
@@ -247,6 +247,7 @@ public:
                     hBitmapOld = NULL;
                 }
 
+                // Draw corner edge
                 if (this->hBrushBtnFace_ != NULL) {
                     CRect rcPoint = rect;
 

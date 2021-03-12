@@ -304,7 +304,7 @@ void TargetBoardWnd::DoPaint(CDCHandle dc)
     }
     //*/
 
-    m_scale9PSprite.Draw9PalaceBG(dc, rcWin);
+    m_scale9PSprite.DrawBackgroud(dc, rcWin);
    
     if (m_dcMem.m_hDC == NULL) {
         m_dcMem.CreateCompatibleDC(dc.m_hDC);
@@ -342,7 +342,7 @@ void TargetBoardWnd::DoPaint(CDCHandle dc)
         }
     }
 
-    m_scale9PSprite.Draw9Palace(dc, m_dcMem, rcWin);
+    m_scale9PSprite.DrawFrame(dc, m_dcMem, rcWin);
 
     dc.RestoreDC(-1);
 }

@@ -223,7 +223,7 @@
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Board.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\BoardString.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Color.h" />
-    <ClInclude Include="..\..\..\src\MagicBlockGameUI\CSkinToolWnd.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\SkinWnd.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\MainDlg.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\PlayerBoardWnd.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\resource.h" />
