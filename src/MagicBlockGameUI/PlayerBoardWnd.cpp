@@ -3,6 +3,7 @@
 #include "resource.h"
 
 #include "PlayerBoardWnd.h"
+#include "Move.h"
 
 static const LONG nBoardBgTop = 24;
 static const LONG nBoardBgBottom = 24;
@@ -22,6 +23,16 @@ static const LONG nBtnTotalWidth = nBtnLeftEdgeX +
                                    nBtnRandomGenWidth + nBtnUserCustomizeWidth +
                                    nBtnImportStringWidth + nBtnIntervalX * 2 +
                                    nBtnRightEdgeX;
+
+static const UINT nGridColorsOffsetX = 25;
+static const UINT nGridColorsOffsetY = 27;
+
+static const UINT nGridColorsLeft = 2;
+static const UINT nGridColorsTop = 2;
+static const UINT nGridColorsInterval = 2;
+
+static const UINT nGridColorsWidth = 71;
+static const UINT nGridColorsHeight = 71;
 
 PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData)
     : m_pData(pData), m_hBrushBG(NULL), m_dwLastBringTick(0)
@@ -108,14 +119,55 @@ void PlayerBoardWnd::OnDestroy()
 {
 }
 
-void PlayerBoardWnd::GetBoardBgPoint(CRect & rcWin, CPoint & ptBoardBg)
+void PlayerBoardWnd::GetBoardBgPoint(const CRect & rect, CPoint & ptBoardBg)
 {
-    ptBoardBg.x = (rcWin.Width() - m_szBoardBg.cx) / 2;
+    ptBoardBg.x = (rect.Width() - m_szBoardBg.cx) / 2;
     ptBoardBg.y = CSkinWndImpl<PlayerBoardWnd>::GetTitleHeight() + nBoardBgTop;
     if (ptBoardBg.x < 0)
         ptBoardBg.x = 0;
     if (ptBoardBg.y < 0)
         ptBoardBg.y = 0;
+}
+
+void PlayerBoardWnd::GetBoardBgRect(const CRect & rect, CRect & rcBoardBg)
+{
+    CPoint ptBoardBg;
+    this->GetBoardBgPoint(rect, ptBoardBg);
+
+    rcBoardBg.left   = ptBoardBg.x;
+    rcBoardBg.right  = ptBoardBg.x + m_szBoardBg.cx;
+    rcBoardBg.top    = ptBoardBg.y;
+    rcBoardBg.bottom = ptBoardBg.y + m_szBoardBg.cy;
+}
+
+void PlayerBoardWnd::GetBoardBgRect(const CRect & rect, CPoint & ptBoardBg, CRect & rcBoardBg)
+{
+    this->GetBoardBgPoint(rect, ptBoardBg);
+
+    rcBoardBg.left   = ptBoardBg.x;
+    rcBoardBg.right  = ptBoardBg.x + m_szBoardBg.cx;
+    rcBoardBg.top    = ptBoardBg.y;
+    rcBoardBg.bottom = ptBoardBg.y + m_szBoardBg.cy;
+}
+
+void PlayerBoardWnd::GetBoardGridPoint(const CRect & rect, CPoint & ptBoardGrid)
+{
+    ptBoardGrid.x = (rect.Width() - m_szBoardBg.cx) / 2 + nGridColorsOffsetX;
+    ptBoardGrid.y = CSkinWndImpl<PlayerBoardWnd>::GetTitleHeight() + nBoardBgTop + nGridColorsOffsetY;
+    if (ptBoardGrid.x < 0)
+        ptBoardGrid.x = 0;
+    if (ptBoardGrid.y < 0)
+        ptBoardGrid.y = 0;
+}
+
+void PlayerBoardWnd::GetBoardGridRect(const CRect & rect, CPoint & ptBoardGrid, CRect & rcBoardGrid)
+{
+    this->GetBoardGridPoint(rect, ptBoardGrid);
+
+    rcBoardGrid.left   = ptBoardGrid.x;
+    rcBoardGrid.right  = ptBoardGrid.x + m_szBoardBg.cx - nGridColorsOffsetX;
+    rcBoardGrid.top    = ptBoardGrid.y;
+    rcBoardGrid.bottom = ptBoardGrid.y + m_szBoardBg.cy - nGridColorsOffsetY;
 }
 
 void PlayerBoardWnd::OnActivate(UINT nState, BOOL bMinimized, CWindow wndOther)
@@ -332,16 +384,6 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
 void PlayerBoardWnd::PaintBoardGrid(CDCHandle & dc, CDC & dcMem, CPoint & ptBoardBg,
                                     UINT x, UINT y, UINT grid)
 {
-    static const UINT nGridColorsOffsetX = 25;
-    static const UINT nGridColorsOffsetY = 27;
-
-    static const UINT nGridColorsLeft = 2;
-    static const UINT nGridColorsTop = 2;
-    static const UINT nGridColorsInterval = 2;
-
-    static const UINT nGridColorsWidth = 71;
-    static const UINT nGridColorsHeight = 71;
-
     ATLASSERT(grid >= 0 && grid < 7);
     if (grid != 0) {
         BOOL paintOK = dc.BitBlt(ptBoardBg.x + nGridColorsOffsetX + x * nGridColorsWidth,
@@ -358,17 +400,85 @@ void PlayerBoardWnd::PaintBoardGrid(CDCHandle & dc, CDC & dcMem, CPoint & ptBoar
     }
 }
 
+HitInfo PlayerBoardWnd::OnHitTest(const CRect & rect, const CPoint & point)
+{
+    HitInfo hitInfo;
+    CPoint ptBoardGrid;
+    CRect rcBoardGrid;
+    GetBoardGridRect(rect, ptBoardGrid, rcBoardGrid);
+    if (::PtInRect(&rcBoardGrid, point)) {
+        hitInfo.area = HitArea::Board;
+        int x = (point.x - ptBoardGrid.x) / nGridColorsWidth;
+        int y = (point.y - ptBoardGrid.y) / nGridColorsHeight;
+        int index;
+        if (x >= 0 && y >= 0)
+            index = y * BoardY + x;
+        else
+            index = -1;
+        hitInfo.index = (WORD)index;
+    }
+    else {
+        hitInfo.area = HitArea::Client;
+        hitInfo.index = 0;
+    }
+    return hitInfo;
+}
+
 void PlayerBoardWnd::OnLButtonDown(UINT nFlags, CPoint point)
 {
-    //
+    CRect rect;
+    ::GetClientRect(this->m_hWnd, &rect);
+    HitInfo hitInfo = this->OnHitTest(rect, point);
+    WORD index;
+    switch (hitInfo.area) {
+        case HitArea::Caption:
+            break;
+        case HitArea::CloseBtn:
+            ShowWindow(SW_HIDE);
+            break;
+        case HitArea::Client:
+            break;
+        case HitArea::Board:
+            index = hitInfo.index;
+            if (index != (WORD)-1) {
+                // Move block
+                this->MoveBoardBlock(rect, index, TRUE);
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 void PlayerBoardWnd::OnLButtonUp(UINT nFlags, CPoint point)
 {
-    //
 }
 
 void PlayerBoardWnd::OnMouseMove(UINT nFlags, CPoint point)
 {
     //
+}
+
+BOOL PlayerBoardWnd::MoveBoardBlock(const CRect & rect, int index, BOOL bRepaint /* = TRUE */)
+{
+    if (index >= 0 && index < BoardX * BoardY) {
+        int x1 = index % BoardY;
+        int y1 = index / BoardY;
+        for (int dir = Direction::First; dir < Direction::Last; dir++) {
+            int x2 = x1 + Dir_Offset[dir].x;
+            if (x2 < 0 || x2 >= BoardX)
+                continue;
+            int y2 = y1 + Dir_Offset[dir].y;
+            if (y2 < 0 || y2 >= BoardY)
+                continue;
+            int move_to = y2 * BoardY + x2;
+            if (this->m_pData->playerBoard.grids[move_to] == Color::Empty) {
+                std::swap(this->m_pData->playerBoard.grids[index],
+                          this->m_pData->playerBoard.grids[move_to]);
+                InvalidateRect(rect, bRepaint);
+                break;
+            }
+        }
+    }
+    return TRUE;
 }

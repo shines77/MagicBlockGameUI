@@ -67,9 +67,19 @@ public:
     void OnMouseMove(UINT nFlags, CPoint point);
 
 protected:
-    void GetBoardBgPoint(CRect & rcWin, CPoint & ptBoardBg);
+    HitInfo OnHitTest(const CRect & rect, const CPoint & point);
+
+    void GetBoardBgPoint(const CRect & rect, CPoint & ptBoardBg);
+    void GetBoardBgRect(const CRect & rect, CRect & rcBoardBg);
+    void GetBoardBgRect(const CRect & rect, CPoint & ptBoardBg, CRect & rcBoardBg);
+
+    void GetBoardGridPoint(const CRect & rect, CPoint & ptBoardGrid);
+    void GetBoardGridRect(const CRect & rect, CPoint & ptBoardGrid, CRect & rcBoardGrid);
+
     void PaintBoardGrid(CDCHandle & dc, CDC & dcMem, CPoint & ptBoardBg,
                         UINT x, UINT y, UINT grid);
+
+    BOOL MoveBoardBlock(const CRect & rect, int index, BOOL bRepaint = TRUE);
 
 private:
     SharedData<BoardX, BoardY, TargetX, TargetY> * m_pData;

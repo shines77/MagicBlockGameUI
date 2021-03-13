@@ -2,6 +2,32 @@
 
 #include <tchar.h>
 
+struct HitArea {
+    enum {
+        First,
+        Caption,
+        MinBtn,
+        MaxBtn,
+        CloseBtn,
+        Client,
+        Board,
+        Last
+    };
+};
+
+union HitInfo {
+    struct {;
+        WORD area;
+        WORD index;
+    };
+    DWORD value;
+
+    HitInfo() : value(0) {}
+    HitInfo(DWORD _value) : value(_value) {}
+    HitInfo(WORD _area, WORD _index) : area(_area), index(_index) {}
+    ~HitInfo() {}
+};
+
 template <typename T>
 class CSkinWndImpl
 {
@@ -30,7 +56,7 @@ public:
 
 public:
     CSkinWndImpl()
-        : m_bSkinActive(FALSE),
+        : m_bSkinActive(TRUE),
           m_clrTitleActive(nCaptionTextActiveColor),
           m_clrTitleNonActive(nCaptionTextNonActiveColor),
           m_hSkinCaptionBGActiveBrush(NULL),
