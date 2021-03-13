@@ -3,6 +3,13 @@
 #include <stdint.h>
 #include <stddef.h>
 
+static const char * DefaultTargetBoard = {
+    "RGB"
+    "WOR"
+    "YWR"
+};
+
+#if 0
 static const char * DefaultPlayerBoard = {
     "RRYGG"
     "RRYGG"
@@ -10,6 +17,15 @@ static const char * DefaultPlayerBoard = {
     "BBYWW"
     "BBYWW"
 };
+#else
+static const char * DefaultPlayerBoard = {
+    "RYWOR"
+    "WYOGB"
+    "BGREO"
+    "RWBYW"
+    "YOGBG"
+};
+#endif
 
 struct Color {
     enum {

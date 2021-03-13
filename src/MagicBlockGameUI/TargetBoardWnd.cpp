@@ -56,12 +56,24 @@ TargetBoardWnd::TargetBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pD
         m_szGridColors.cy = 0;
     }
 
+#if 1
+    for (UINT y = 0; y < TargetY; y++) {
+        for (UINT x = 0; x < TargetX; x++) {
+            UINT pos = y * TargetY + x;
+            if (pos < (TargetX * TargetY)) {
+                UINT grid = Color::strToColor(DefaultTargetBoard[pos]);
+                m_pData->targetBoard.setGrid(x, y, grid);
+            }
+        }
+    }
+#else
     for (UINT y = 0; y < TargetY; y++) {
         for (UINT x = 0; x < TargetX; x++) {
             UINT grid = (rand() % 6) + 1;
             m_pData->targetBoard.setGrid(x, y, grid);
         }
     }
+#endif
 }
 
 TargetBoardWnd::~TargetBoardWnd()
@@ -401,7 +413,7 @@ HitInfo TargetBoardWnd::OnHitTest(const CRect & rect, const CPoint & point)
         int y = (point.y - ptBoardGrid.y) / nGridColorsHeight;
         int index;
         if (x >= 0 && y >= 0)
-            index = y * BoardY + x;
+            index = y * TargetY + x;
         else
             index = -1;
         hitInfo.index = (WORD)index;

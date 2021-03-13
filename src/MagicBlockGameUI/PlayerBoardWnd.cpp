@@ -57,7 +57,7 @@ PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pD
     for (UINT y = 0; y < BoardY; y++) {
         for (UINT x = 0; x < BoardX; x++) {
             UINT pos = y * BoardY + x;
-            if (pos < (BoardY * BoardY)) {
+            if (pos < (BoardX * BoardY)) {
                 UINT grid = Color::strToColor(DefaultPlayerBoard[pos]);
                 m_pData->playerBoard.setGrid(x, y, grid);
             }
