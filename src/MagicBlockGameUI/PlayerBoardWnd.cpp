@@ -4,6 +4,25 @@
 
 #include "PlayerBoardWnd.h"
 
+static const LONG nBoardBgTop = 24;
+static const LONG nBoardBgBottom = 24;
+
+static const LONG nBtnRandomGenWidth = 60;
+static const LONG nBtnUserCustomizeWidth = 70;
+static const LONG nBtnImportStringWidth = 110;
+static const LONG nBtnHeight = 30;
+static const LONG nEditHeight = 26;
+
+static const LONG nBtnLeftEdgeX  = 4;
+static const LONG nBtnIntervalX  = 12;
+static const LONG nBtnIntervalY  = 15;
+static const LONG nBtnRightEdgeX = 4;
+
+static const LONG nBtnTotalWidth = nBtnLeftEdgeX +
+                                   nBtnRandomGenWidth + nBtnUserCustomizeWidth +
+                                   nBtnImportStringWidth + nBtnIntervalX * 2 +
+                                   nBtnRightEdgeX;
+
 PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData)
     : m_pData(pData), m_hBrushBG(NULL), m_dwLastBringTick(0)
 {
@@ -54,6 +73,9 @@ PlayerBoardWnd::~PlayerBoardWnd()
     m_bmpGridColors.DeleteObject();
     m_bmpBoardBg.DeleteObject();
 
+    m_btnFont.DeleteObject();
+    m_editFont.DeleteObject();
+
     m_dcMem.DeleteDC();
 }
 
@@ -79,12 +101,21 @@ int PlayerBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void PlayerBoardWnd::OnClose()
 {
-    //DestroyWindow();
     ShowWindow(SW_HIDE);
 }
 
 void PlayerBoardWnd::OnDestroy()
 {
+}
+
+void PlayerBoardWnd::GetBoardBgPoint(CRect & rcWin, CPoint & ptBoardBg)
+{
+    ptBoardBg.x = (rcWin.Width() - m_szBoardBg.cx) / 2;
+    ptBoardBg.y = CSkinWndImpl<PlayerBoardWnd>::GetTitleHeight() + nBoardBgTop;
+    if (ptBoardBg.x < 0)
+        ptBoardBg.x = 0;
+    if (ptBoardBg.y < 0)
+        ptBoardBg.y = 0;
 }
 
 void PlayerBoardWnd::OnActivate(UINT nState, BOOL bMinimized, CWindow wndOther)
@@ -104,6 +135,111 @@ void PlayerBoardWnd::OnActivate(UINT nState, BOOL bMinimized, CWindow wndOther)
     }
 }
 
+void PlayerBoardWnd::OnShowWindow(BOOL bShow, UINT nStatus)
+{
+    CRect rcWin;
+    GetClientRect(&rcWin);
+
+    CPoint ptBoardBg;
+    GetBoardBgPoint(rcWin, ptBoardBg);
+
+    if (m_btnFont.m_hFont == NULL) {
+        int nFontSize = 9;
+        int PixelsY = ::GetDeviceCaps(this->GetDC(), LOGPIXELSY);
+        int nPointSize = int((nFontSize / 96.0) * PixelsY * 10);
+        m_btnFont.CreatePointFont(nPointSize, _T("宋体"), this->GetDC());
+    }
+    if (m_editFont.m_hFont == NULL) {
+        int nFontSize = 12;
+        int PixelsY = ::GetDeviceCaps(this->GetDC(), LOGPIXELSY);
+        int nPointSize = int((nFontSize / 96.0) * PixelsY * 10);
+        m_editFont.CreatePointFont(nPointSize, _T("宋体"), this->GetDC());
+    }
+
+    DWORD dwBtnStyle = WS_CHILD | WS_GROUP | WS_TABSTOP;
+    DWORD dwBtnExStyle = 0;
+
+    if (m_btnRandomGen.m_hWnd == NULL) {
+        CRect rcBtn(0, 0, nBtnRandomGenWidth, nBtnHeight);
+        m_btnRandomGen.Create(m_hWnd, &rcBtn, _T("随机"), dwBtnStyle, dwBtnExStyle);
+        m_btnRandomGen.SetFont(m_btnFont.m_hFont);
+    }
+    if (m_btnUserCustomize.m_hWnd == NULL) {
+        CRect rcBtn(0, 0, nBtnUserCustomizeWidth, nBtnHeight);
+        m_btnUserCustomize.Create(m_hWnd, &rcBtn, _T("自定义"), dwBtnStyle, dwBtnExStyle);
+        m_btnUserCustomize.SetFont(m_btnFont.m_hFont);
+    }
+    if (m_btnImportString.m_hWnd == NULL) {
+        CRect rcBtn(0, 0, nBtnImportStringWidth, nBtnHeight);
+        m_btnImportString.Create(m_hWnd, &rcBtn, _T("从字符串导入"), dwBtnStyle, dwBtnExStyle);
+        m_btnImportString.SetFont(m_btnFont.m_hFont);
+    }
+
+    DWORD dwEditStyle = WS_CHILD | WS_GROUP | WS_TABSTOP | WS_BORDER | WS_CLIPSIBLINGS | WS_CLIPCHILDREN;
+    DWORD dwEditExStyle = 0;
+
+    if (m_editTargetString.m_hWnd == NULL) {
+        CRect rcBtn(0, 0, m_szBoardBg.cy - nBtnLeftEdgeX - nBtnRightEdgeX, nEditHeight);
+        m_editTargetString.Create(m_hWnd, &rcBtn, _T(""), dwEditStyle, dwEditExStyle);
+        m_editTargetString.SetFont(m_editFont.m_hFont);
+    }
+
+    CPoint ptButtonRect;
+    //ptButtonRect.x = (rcWin.Width() - nBtnTotalWidth) / 2;
+    ptButtonRect.x = (rcWin.Width() - m_szBoardBg.cx) / 2;
+    ptButtonRect.y = ptBoardBg.y + m_szBoardBg.cy + nBoardBgBottom;
+
+    CPoint ptMove;
+    CRect rcBtn1;
+    if (m_btnRandomGen.m_hWnd != NULL) {
+        rcBtn1.SetRect(0, 0, nBtnRandomGenWidth, nBtnHeight);
+        ptMove.x = ptButtonRect.x + nBtnLeftEdgeX;
+        ptMove.y = ptButtonRect.y;
+        rcBtn1.OffsetRect(ptMove);
+        m_btnRandomGen.MoveWindow(&rcBtn1, FALSE);
+        if (!m_btnRandomGen.IsWindowVisible())
+            m_btnRandomGen.ShowWindow(SW_SHOWNORMAL);
+    }
+
+    CRect rcBtn2;
+    if (m_btnUserCustomize.m_hWnd != NULL) {
+        rcBtn2.SetRect(0, 0, nBtnUserCustomizeWidth, nBtnHeight);
+        ptMove.x = rcBtn1.right + nBtnIntervalX;
+        ptMove.y = ptButtonRect.y;
+        rcBtn2.OffsetRect(ptMove);
+        m_btnUserCustomize.MoveWindow(&rcBtn2, FALSE);
+        if (!m_btnUserCustomize.IsWindowVisible())
+            m_btnUserCustomize.ShowWindow(SW_SHOWNORMAL);
+    }
+
+    CRect rcBtn3;
+    if (m_btnImportString.m_hWnd != NULL) {
+        rcBtn3.SetRect(0, 0, nBtnImportStringWidth, nBtnHeight);
+        ptMove.x = rcBtn2.right + nBtnIntervalX;
+        ptMove.y = ptButtonRect.y;
+        rcBtn3.OffsetRect(ptMove);
+        m_btnImportString.MoveWindow(&rcBtn3, FALSE);
+        if (!m_btnImportString.IsWindowVisible())
+            m_btnImportString.ShowWindow(SW_SHOWNORMAL);
+    }
+
+    CRect rcEdit;
+    if (m_editTargetString.m_hWnd != NULL) {
+        m_editTargetString.SetParent(this->m_hWnd);
+        rcEdit.SetRect(0, 0, m_szBoardBg.cy - nBtnLeftEdgeX - nBtnRightEdgeX, nEditHeight);
+        ptMove.x = ptButtonRect.x + nBtnLeftEdgeX;
+        ptMove.y = ptButtonRect.y + nBtnIntervalY + nBtnHeight;
+        rcEdit.OffsetRect(ptMove);
+        m_editTargetString.MoveWindow(&rcEdit, FALSE);
+        if (!m_editTargetString.IsWindowVisible()) {
+            m_editTargetString.SetWindowText(_T("RGBRGBRGB"));
+            m_editTargetString.EnableWindow(TRUE);
+            m_editTargetString.ShowWindow(SW_SHOWNORMAL);
+            m_editTargetString.SetFocus();
+        }
+    }
+}
+
 void PlayerBoardWnd::OnMove(CPoint ptPos)
 {
     DWORD dwTickCount = GetTickCount();
@@ -113,41 +249,17 @@ void PlayerBoardWnd::OnMove(CPoint ptPos)
     }
 }
 
-LRESULT PlayerBoardWnd::OnEraseBackground2(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
-{
-	this->SetMsgHandled(TRUE);
-	LRESULT lResult = (LRESULT)OnEraseBkgnd((HDC)wParam);
-	if (this->IsMsgHandled())
-		return TRUE;
-    return lResult;
-}
-
-BOOL PlayerBoardWnd::OnEraseBkgnd(CDCHandle dc)
-{
-    CRect rcWin;
-    GetClientRect(&rcWin);
-
-    if (m_hBrushBG != NULL) {
-        dc.FillRect(&rcWin, m_hBrushBG);
-    }
-    return FALSE;
-}
-
 void PlayerBoardWnd::DoPaint(CDCHandle dc)
 {
     CRect rcWin;
     GetClientRect(&rcWin);
 
     CPoint ptBoardBg;
-    ptBoardBg.x = (rcWin.Width() - m_szBoardBg.cx) / 2;
-    ptBoardBg.y = (rcWin.Height() - m_szBoardBg.cy) / 2;
-    if (ptBoardBg.x < 0)
-        ptBoardBg.x = 0;
-    if (ptBoardBg.y < 0)
-        ptBoardBg.y = 0;
+    GetBoardBgPoint(rcWin, ptBoardBg);
 
     dc.SaveDC();
 
+#if 0
     if (m_hBrushBG != NULL) {
         // Top
         if (ptBoardBg.y > 1) {
@@ -172,6 +284,7 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
             dc.FillRect(&rcBottom, m_hBrushBG);
         }
     }
+#endif
 
     CSkinWndImpl<PlayerBoardWnd>::SkinWnd_DrawBackgroud(dc, m_dcMem, rcWin);
 

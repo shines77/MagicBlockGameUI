@@ -70,7 +70,7 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
     if (targetBoardWnd_ == NULL) {
         targetBoardWnd_ = new TargetBoardWnd(&this->m_data);
         if (targetBoardWnd_ != NULL) {
-            CRect rcTargetWnd = { 0, 0, 310, 425 };
+            CRect rcTargetWnd = { 0, 0, 310, 420 };
             targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("ƒø±Í◊¥Ã¨"),
                 WS_CHILD | WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                 dwExStyle);
@@ -80,7 +80,7 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
     if (playerBoardWnd_ == NULL) {
         playerBoardWnd_ = new PlayerBoardWnd(&this->m_data);
         if (playerBoardWnd_ != NULL) {
-            CRect rcPlayerWnd = { 0, 0, 500, 600 };
+            CRect rcPlayerWnd = { 0, 0, 480, 585 };
             playerBoardWnd_->Create(this->m_hWnd, rcPlayerWnd, _T("ÕÊº“∆Â≈Ã"),
                 WS_CHILD | WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                 dwExStyle);

@@ -6,7 +6,7 @@
 
 #include "TargetBoardWnd.h"
 
-static const LONG nBoardBgTop = 16;
+static const LONG nBoardBgTop = 20;
 static const LONG nBoardBgBottom = 20;
 
 static const LONG nBtnRandomGenWidth = 60;
@@ -15,11 +15,15 @@ static const LONG nBtnImportStringWidth = 100;
 static const LONG nBtnHeight = 30;
 static const LONG nEditHeight = 26;
 
-static const LONG nBtnIntervalX = 10;
-static const LONG nBtnIntervalY = 10;
+static const LONG nBtnLeftEdgeX  = 0;
+static const LONG nBtnIntervalX  = 10;
+static const LONG nBtnIntervalY  = 13;
+static const LONG nBtnRightEdgeX = 0;
 
-static const LONG nBtnTotalWidth = nBtnRandomGenWidth + nBtnUserCustomizeWidth +
-                                   nBtnImportStringWidth + nBtnIntervalX * 2;
+static const LONG nBtnTotalWidth = nBtnLeftEdgeX +
+                                   nBtnRandomGenWidth + nBtnUserCustomizeWidth +
+                                   nBtnImportStringWidth + nBtnIntervalX * 2 +
+                                   nBtnRightEdgeX;
 
 TargetBoardWnd::TargetBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData)
     : m_pData(pData), m_hBrushBG(NULL), m_dwLastBringTick(0)
@@ -87,12 +91,21 @@ int TargetBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void TargetBoardWnd::OnClose()
 {
-    //DestroyWindow();
     ShowWindow(SW_HIDE);
 }
 
 void TargetBoardWnd::OnDestroy()
 {
+}
+
+void TargetBoardWnd::GetBoardBgPoint(CRect & rcWin, CPoint & ptBoardBg)
+{
+    ptBoardBg.x = (rcWin.Width() - m_szBoardBg.cx) / 2;
+    ptBoardBg.y = CSkinWndImpl<TargetBoardWnd>::GetTitleHeight() + nBoardBgTop;
+    if (ptBoardBg.x < 0)
+        ptBoardBg.x = 0;
+    if (ptBoardBg.y < 0)
+        ptBoardBg.y = 0;
 }
 
 void TargetBoardWnd::OnActivate(UINT nState, BOOL bMinimized, CWindow wndOther)
@@ -118,12 +131,7 @@ void TargetBoardWnd::OnShowWindow(BOOL bShow, UINT nStatus)
     GetClientRect(&rcWin);
 
     CPoint ptBoardBg;
-    ptBoardBg.x = (rcWin.Width() - m_szBoardBg.cx) / 2;
-    ptBoardBg.y = CSkinWndImpl<TargetBoardWnd>::GetTitleHeight() + nBoardBgTop;
-    if (ptBoardBg.x < 0)
-        ptBoardBg.x = 0;
-    if (ptBoardBg.y < 0)
-        ptBoardBg.y = 0;
+    GetBoardBgPoint(rcWin, ptBoardBg);
 
     if (m_btnFont.m_hFont == NULL) {
         int nFontSize = 9;
@@ -230,45 +238,17 @@ void TargetBoardWnd::OnMove(CPoint ptPos)
     }
 }
 
-LRESULT TargetBoardWnd::OnEraseBackground2(UINT nMsg, WPARAM wParam, LPARAM lParam, BOOL & bHandled)
-{
-	this->SetMsgHandled(TRUE);
-	LRESULT lResult = (LRESULT)OnEraseBkgnd((HDC)wParam);
-	if (this->IsMsgHandled())
-		return TRUE;
-    return lResult;
-}
-
-BOOL TargetBoardWnd::OnEraseBkgnd(CDCHandle dc)
-{
-#if 0
-    CRect rcWin;
-    GetClientRect(&rcWin);
-
-    if (m_hBrushBG != NULL) {
-        dc.FillRect(&rcWin, m_hBrushBG);
-    }
-#endif
-    return FALSE;
-}
-
 void TargetBoardWnd::DoPaint(CDCHandle dc)
 {
     CRect rcWin;
     GetClientRect(&rcWin);
 
     CPoint ptBoardBg;
-    ptBoardBg.x = (rcWin.Width() - m_szBoardBg.cx) / 2;
-    //ptBoardBg.y = (rcWin.Height() - m_szBoardBg.cy) / 2;
-    ptBoardBg.y = CSkinWndImpl<TargetBoardWnd>::GetTitleHeight() + nBoardBgTop;
-    if (ptBoardBg.x < 0)
-        ptBoardBg.x = 0;
-    if (ptBoardBg.y < 0)
-        ptBoardBg.y = 0;
+    GetBoardBgPoint(rcWin, ptBoardBg);
 
     dc.SaveDC();
 
-    /*
+#if 0
     if (m_hBrushBG != NULL) {
         // Top
         if (ptBoardBg.y > 1) {
@@ -293,7 +273,7 @@ void TargetBoardWnd::DoPaint(CDCHandle dc)
             dc.FillRect(&rcBottom, m_hBrushBG);
         }
     }
-    //*/
+#endif
 
     CSkinWndImpl<TargetBoardWnd>::SkinWnd_DrawBackgroud(dc, m_dcMem, rcWin);
    
