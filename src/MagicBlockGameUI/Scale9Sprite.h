@@ -95,12 +95,15 @@ public:
     }
 
     void DrawBackgroud(CDCHandle dc, CDCHandle dcMem, CRect & rect) {
-        if (this->sprite_.m_hBitmap != NULL) {
-            if (this->bgColor_ != kDefaultBGColor) {
-                if (dc.m_hDC != NULL) {
-                    if (this->hBrushBG_ != NULL) {
-                        dc.FillRect(&rect, this->hBrushBG_);
-                    }
+        if (this->bgColor_ != kDefaultBGColor) {
+            if (dc.m_hDC != NULL) {
+                if (this->hBrushBG_ != NULL) {
+                    CRect rcBG(rect);
+                    rcBG.left += this->rects_[LeftMiddle].Width();
+                    rcBG.top  += this->rects_[TopMiddle].Height();
+                    rcBG.right  -= this->rects_[RightMiddle].Width();
+                    rcBG.bottom -= this->rects_[BottomMiddle].Height();
+                    dc.FillRect(&rcBG, this->hBrushBG_);
                 }
             }
         }

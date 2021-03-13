@@ -175,7 +175,7 @@ public:
             }
             else {
                 _tcscpy_s(szTitle, _countof(szTitle) - 1, _T("Î´ÃüÃû..."));
-                nTitleSize = _tcslen(szTitle);
+                nTitleSize = (int)_tcslen(szTitle);
             }
 
 	        if (m_bSkinActive)
@@ -191,13 +191,12 @@ public:
 
             CFont font;
 	        font.CreatePointFont(::GetSystemMetrics(SM_CYSMCAPTION), _T("System"));
-	        HFONT pOldFont = (HFONT)::SelectObject(dc.m_hDC, font.m_hFont);
+            HFONT pOldFont = dc.SelectFont(font.m_hFont);
             if (pOldFont != NULL) {
-	            ::SetBkMode(dc.m_hDC, TRANSPARENT);
-	            ::DrawTextEx(dc.m_hDC, szTitle, nTitleSize, rcCaption,
-                             DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_WORD_ELLIPSIS,
-                             NULL);
-	            ::SelectObject(dc.m_hDC, (HGDIOBJ)pOldFont);
+                dc.SetBkMode(TRANSPARENT);
+	            dc.DrawText(szTitle, nTitleSize, &rcCaption,
+                            DT_SINGLELINE | DT_CENTER | DT_VCENTER | DT_WORD_ELLIPSIS);
+	            dc.SelectFont(pOldFont);
             }
 	        font.DeleteObject();
         }
@@ -303,11 +302,12 @@ public:
         if (m_bSkinLMouseDown) {
             if ((nFlags & MK_LBUTTON) == MK_LBUTTON) {
                 if (point != m_ptSkinLMouseDown) {
-                    CRect rcWin;
-                    if (::GetWindowRect(this->GetSafeHwnd(), &rcWin)) {
+                    //CRect rcWin;
+                    //if (::GetWindowRect(this->GetSafeHwnd(), &rcWin))
+                    {
                         CPoint offset = point - m_ptSkinLMouseDown;
                         m_rcSkinLMouseDown.OffsetRect(offset);
-                        rcWin = m_rcSkinLMouseDown;
+                        CRect & rcWin = m_rcSkinLMouseDown;
 #if 0
                         TCHAR szText[128];
                         _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
@@ -322,13 +322,12 @@ public:
                                            rcWin.left,
                                            rcWin.top,
                                            0, 0,
-                                           SWP_NOSIZE | SWP_NOACTIVATE)) {
+                                           SWP_NOSIZE)) {
                             return;
                         }
 #else
-                        if (::MoveWindow(this->GetSafeHwnd(), rcWin.left, rcWin.top, rcWin.Width(), rcWin.Height(), TRUE)) {
-                            //m_ptSkinLMouseDown = point;
-                            //m_ptSkinLMouseDownWndPos = rcWin.TopLeft();
+                        if (::MoveWindow(this->GetSafeHwnd(), rcWin.left, rcWin.top,
+                                         rcWin.Width(), rcWin.Height(), TRUE)) {
                             return;
                         }
 #endif
@@ -340,7 +339,7 @@ public:
             }
         }
 
-        m_ptSkinLMouseDown = point;
+        //m_ptSkinLMouseDown = point;
     }
 
 protected:
