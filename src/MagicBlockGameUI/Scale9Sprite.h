@@ -55,7 +55,7 @@ private:
     COLORREF        bgColor_;
 
 public:
-    Scale9Sprite() : hBrushBG_(NULL), hBrushBtnFace_(NULL), bgColor_(kDefaultBGColor) {
+    Scale9Sprite() : hBrushBG_(NULL), hBrushBtnFace_(NULL), rects_(NULL), bgColor_(kDefaultBGColor) {
         this->hBrushBtnFace_ = ::CreateSolidBrush(::GetSysColor(COLOR_BTNFACE));
     }
 
@@ -72,6 +72,8 @@ public:
             ::DeleteObject(this->hBrushBtnFace_);
             this->hBrushBtnFace_ = NULL;
         }
+        this->sprite_ = NULL;
+        this->rects_ = NULL;
     }
 
     void SetSprite(CBitmapHandle sprite, const CRect * rects, COLORREF bgColor) {
@@ -84,14 +86,18 @@ public:
         this->hBrushBG_ = ::CreateSolidBrush(bgColor);
     }
 
-    void DrawBackgroud(CDC & dc, CRect & rect) {
-        this->DrawBackgroud(dc.m_hDC, rect);
+    void DrawBackgroud(CDC & dc, CDC & dcMem, CRect & rect) {
+        this->DrawBackgroud(dc.m_hDC, dcMem.m_hDC, rect);
     }
 
-    void DrawBackgroud(CDCHandle dc, CRect & rect) {
+    void DrawBackgroud(CDCHandle dc, CDC & dcMem, CRect & rect) {
+        this->DrawBackgroud(dc, dcMem.m_hDC, rect);
+    }
+
+    void DrawBackgroud(CDCHandle dc, CDCHandle dcMem, CRect & rect) {
         if (this->sprite_.m_hBitmap != NULL) {
-            if (dc.m_hDC != NULL) {
-                if (this->bgColor_ != kDefaultBGColor) {
+            if (this->bgColor_ != kDefaultBGColor) {
+                if (dc.m_hDC != NULL) {
                     if (this->hBrushBG_ != NULL) {
                         dc.FillRect(&rect, this->hBrushBG_);
                     }
@@ -109,7 +115,7 @@ public:
     }
 
     void DrawFrame(CDCHandle dc, CDCHandle dcMem, CRect & rect) {
-        if (this->sprite_.m_hBitmap != NULL) {
+        if (this->sprite_.m_hBitmap != NULL && this->rects_ != NULL) {
             if (dc.m_hDC != NULL && dcMem.m_hDC != NULL) {
                 HBITMAP hBitmapOld = dcMem.SelectBitmap(this->sprite_.m_hBitmap);
                 if (hBitmapOld != NULL) {

@@ -71,7 +71,7 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
         targetBoardWnd_ = new TargetBoardWnd(&this->m_data);
         if (targetBoardWnd_ != NULL) {
             CRect rcTargetWnd = { 0, 0, 310, 425 };
-            targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("目标"),
+            targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("目标状态"),
                 WS_CHILD | WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                 dwExStyle);
         }

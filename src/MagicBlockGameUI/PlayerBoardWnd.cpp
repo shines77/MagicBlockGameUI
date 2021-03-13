@@ -7,9 +7,10 @@
 PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pData)
     : m_pData(pData), m_hBrushBG(NULL), m_dwLastBringTick(0)
 {
+    m_hBrushBG = ::CreateSolidBrush(::GetSysColor(COLOR_BTNFACE));
+
     m_bmpBoardBg.LoadBitmap(IDB_BITMAP_BOARD_BG_5x5);
     m_bmpGridColors.LoadBitmap(IDB_BITMAP_GRID_COLORS);
-    m_bmpScale9PSprite.LoadBitmap(IDB_BITMAP_BTN_SCALE9PSPRITE_GRAY);
 
     int success = m_bmpBoardBg.GetSize(m_szBoardBg);
     if (success == 0) {
@@ -22,9 +23,6 @@ PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pD
         m_szGridColors.cx = 0;
         m_szGridColors.cy = 0;
     }
-
-    // 0x00686868, 0x00767676
-    m_scale9PSprite.SetSprite(m_bmpScale9PSprite.m_hBitmap, rcScale9PSprite, kDefaultBGColor);
 
     for (UINT y = 0; y < BoardY; y++) {
         for (UINT x = 0; x < BoardX; x++) {
@@ -55,9 +53,6 @@ PlayerBoardWnd::~PlayerBoardWnd()
 
     m_bmpGridColors.DeleteObject();
     m_bmpBoardBg.DeleteObject();
-    m_bmpScale9PSprite.DeleteObject();
-
-    m_scale9PSprite.Destroy();
 
     m_dcMem.DeleteDC();
 }
@@ -76,10 +71,6 @@ int PlayerBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	HICON hIconSmall = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR,
         ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(hIconSmall, FALSE);
-
-    if (m_hBrushBG == NULL) {
-        m_hBrushBG = ::CreateSolidBrush(::GetSysColor(COLOR_BTNFACE));
-    }
 
     ShowWindow(SW_SHOWNORMAL);
 
@@ -182,7 +173,7 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
         }
     }
 
-    m_scale9PSprite.DrawBackgroud(dc, rcWin);
+    CSkinWndImpl<PlayerBoardWnd>::SkinWnd_DrawBackgroud(dc, m_dcMem, rcWin);
 
     if (m_dcMem.m_hDC == NULL) {
         m_dcMem.CreateCompatibleDC(dc.m_hDC);
@@ -220,7 +211,7 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
         }
     }
 
-    m_scale9PSprite.DrawFrame(dc, m_dcMem, rcWin);
+    CSkinWndImpl<PlayerBoardWnd>::SkinWnd_DrawFrame(dc, m_dcMem, rcWin);
 
     dc.RestoreDC(-1);
 }

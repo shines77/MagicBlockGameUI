@@ -80,8 +80,6 @@ private:
     CSize m_szBoardBg;
     CSize m_szGridColors;
 
-    Scale9Sprite m_scale9PSprite;
-
     HBRUSH m_hBrushBG;
     DWORD m_dwLastBringTick;
 };

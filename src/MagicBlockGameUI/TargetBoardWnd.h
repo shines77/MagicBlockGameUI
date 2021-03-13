@@ -95,8 +95,6 @@ private:
 
     CEdit m_editTargetString;
 
-    Scale9Sprite m_scale9PSprite;
-
     HBRUSH m_hBrushBG;
     DWORD m_dwLastBringTick;
 };
