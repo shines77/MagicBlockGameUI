@@ -57,11 +57,6 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	pLoop->AddMessageFilter(this);
 	pLoop->AddIdleHandler(this);
 
-	// center the dialog on the screen
-	CenterWindow();
-
-	UIAddChildWindowContainer(m_hWnd);
-
     this->m_data.parent = m_hWnd;
 
     DWORD dwExStyle = WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE;
@@ -72,7 +67,7 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
         if (targetBoardWnd_ != NULL) {
             CRect rcTargetWnd = { 0, 0, 310, 420 };
             targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("ƒø±Í◊¥Ã¨"),
-                WS_CHILD | WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                WS_CHILD | WS_OVERLAPPED | WS_GROUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                 dwExStyle);
         }
     }
@@ -82,10 +77,15 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
         if (playerBoardWnd_ != NULL) {
             CRect rcPlayerWnd = { 0, 0, 480, 585 };
             playerBoardWnd_->Create(this->m_hWnd, rcPlayerWnd, _T("ÕÊº“∆Â≈Ã"),
-                WS_CHILD | WS_OVERLAPPED | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                WS_CHILD | WS_OVERLAPPED | WS_GROUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                 dwExStyle);
         }
     }
+
+	// center the dialog on the screen
+	CenterWindow();
+
+	UIAddChildWindowContainer(m_hWnd);
 
 	return TRUE;
 }

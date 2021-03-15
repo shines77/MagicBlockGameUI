@@ -57,6 +57,7 @@ public:
 public:
     CSkinWndImpl()
         : m_bSkinActive(TRUE),
+          m_bSkinLMouseMoving(FALSE),
           m_clrTitleActive(nCaptionTextActiveColor),
           m_clrTitleNonActive(nCaptionTextNonActiveColor),
           m_hSkinCaptionBGActiveBrush(NULL),
@@ -254,10 +255,16 @@ public:
     }
 
     void SkinWnd_UpdateTitle() {
+#if 0
+        ::InvalidateRect(this->GetSafeHwnd(), NULL, FALSE);
+        ::UpdateWindow(this->GetSafeHwnd());
+#else
         CRect rcTitle;
         if (this->GetTitleRect(rcTitle)) {
-            ::InvalidateRect(this->GetSafeHwnd(), &rcTitle, TRUE);
+            ::InvalidateRect(this->GetSafeHwnd(), &rcTitle, FALSE);
+            ::UpdateWindow(this->GetSafeHwnd());
         }
+#endif
     }
 
     BOOL SkinWnd_OnNcActivate(BOOL bActive) {
@@ -297,19 +304,20 @@ public:
         if (this->GetCaptionRect(rcTitle)) {
             if (::PtInRect(&rcTitle, point)) {
                 if (!m_bSkinLMouseDown) {
-                    m_bSkinLMouseDown = TRUE;
-                    ::SetCursor(::LoadCursor(NULL, IDC_SIZEALL));
-                    //::SendMessage(this->GetSafeHwnd(), WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
-                    CRect rcWin;
-                    if (::GetWindowRect(this->GetSafeHwnd(), &rcWin)) {
-                        m_rcSkinLMouseDown = rcWin;
-                        m_ptSkinLMouseDown = point;
+                    if (::SetCapture(this->GetSafeHwnd()) == NULL) {
+                        m_bSkinLMouseDown = TRUE;
+                        ::SetCursor(::LoadCursor(NULL, IDC_SIZEALL));
+                        //::SendMessage(this->GetSafeHwnd(), WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
+                        CRect rcWin;
+                        if (::GetWindowRect(this->GetSafeHwnd(), &rcWin)) {
+                            m_rcSkinLMouseDown = rcWin;
+                            m_ptSkinLMouseDown = point;
+                        }
+                        if (!this->m_bSkinActive) {
+                            this->SkinWnd_UpdateTitle();
+                        }
+                        this->m_bSkinActive = TRUE;
                     }
-                    if (!this->m_bSkinActive) {
-                        this->SkinWnd_UpdateTitle();
-                    }
-                    this->m_bSkinActive = TRUE;
-                    ::SetCapture(this->GetSafeHwnd());
                 }
             }
         }
@@ -330,10 +338,11 @@ public:
                 if (point != m_ptSkinLMouseDown) {
                     //CRect rcWin;
                     //if (::GetWindowRect(this->GetSafeHwnd(), &rcWin))
-                    {
+                    if (!m_bSkinLMouseMoving) {
+                        m_bSkinLMouseMoving = TRUE;
                         CPoint offset = point - m_ptSkinLMouseDown;
-                        m_rcSkinLMouseDown.OffsetRect(offset);
-                        CRect & rcWin = m_rcSkinLMouseDown;
+                        CRect rcWin = m_rcSkinLMouseDown;
+                        rcWin.OffsetRect(offset);
 #if 0
                         TCHAR szText[128];
                         _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
@@ -349,14 +358,19 @@ public:
                                            rcWin.top,
                                            0, 0,
                                            SWP_NOSIZE)) {
+                            m_rcSkinLMouseDown = rcWin;
+                            m_bSkinLMouseMoving = FALSE;
                             return;
                         }
 #else
                         if (::MoveWindow(this->GetSafeHwnd(), rcWin.left, rcWin.top,
                                          rcWin.Width(), rcWin.Height(), TRUE)) {
+                            m_rcSkinLMouseDown = rcWin;
+                            m_bSkinLMouseMoving = FALSE;
                             return;
                         }
 #endif
+                        m_bSkinLMouseMoving = FALSE;
                     }
                 }
                 else {
@@ -380,6 +394,7 @@ private:
     HBRUSH       m_hSkinCaptionBGNonActiveBrush;
 
     BOOL         m_bSkinLMouseDown;
+    BOOL         m_bSkinLMouseMoving;
     CPoint       m_ptSkinLMouseDown;
     CRect        m_rcSkinLMouseDown;
 

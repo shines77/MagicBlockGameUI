@@ -295,11 +295,13 @@ void TargetBoardWnd::OnShowWindow(BOOL bShow, UINT nStatus)
 
 void TargetBoardWnd::OnMove(CPoint ptPos)
 {
+#if 0
     DWORD dwTickCount = GetTickCount();
     if ((dwTickCount - m_dwLastBringTick) > 333) {
         this->BringWindowToTop();
         m_dwLastBringTick = GetTickCount();
     }
+#endif
 }
 
 void TargetBoardWnd::DoPaint(CDCHandle dc)
