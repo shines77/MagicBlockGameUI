@@ -102,6 +102,36 @@ struct Direction {
         return uint8_t(-1);
     }
 
+    static bool isOppDir(int dir1, int dir2) {
+        switch (dir1) {
+            case Direction::Down:
+                return (dir2 == Direction::Up);
+            case Direction::Left:
+                return (dir2 == Direction::Right);
+            case Direction::Up:
+                return (dir2 == Direction::Down);
+            case Direction::Right:
+                return (dir2 == Direction::Left);
+            default:
+                return false;
+        }
+    }
+
+    static int getOppDir(int dir) {
+        switch (dir) {
+            case Direction::Down:
+                return Direction::Up;
+            case Direction::Left:
+                return Direction::Right;
+            case Direction::Up:
+                return Direction::Down;
+            case Direction::Right:
+                return Direction::Left;
+            default:
+                return -1;
+        }
+    }
+
     static const char * toString(size_t dir) {
         switch (dir) {
             case Direction::Down:

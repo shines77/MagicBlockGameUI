@@ -51,12 +51,20 @@ struct Board {
 
     UINT getGrid(UINT x, UINT y) const {
         UINT pos = y * BoardY + x;
+        return this->getGrid(pos);
+    }
+
+    UINT getGrid(UINT pos) const {
         ATLASSERT(pos >= 0 && pos < kGridSize);
         return this->grids[pos];
     }
 
     void setGrid(UINT x, UINT y, UINT color) {
         UINT pos = y * BoardY + x;
+        return this->setGrid(pos, color);
+    }
+
+    void setGrid(UINT pos, UINT color) {
         ATLASSERT(pos >= 0 && pos < kGridSize);
         this->grids[pos] = color;
     }

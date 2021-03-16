@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include <gdiplus.h>
+#include <atlimage.h>
+
 #include "SharedData.h"
 #include "Color.h"
 #include "Board.h"
@@ -75,6 +78,8 @@ protected:
 
     void PaintBoardGrid(CDCHandle & dc, CDC & dcMem, CPoint & ptBoardBg,
                         UINT x, UINT y, UINT grid);
+    void PaintBoardArrow(CDCHandle & dc, Gdiplus::Image * pImage, CPoint & ptBoardBg,
+                         UINT x, UINT y, int arrow, bool is_opposite);
 
     BOOL MoveBoardBlock(const CRect & rect, int index, BOOL bRepaint = TRUE);
 
@@ -83,8 +88,9 @@ private:
 
     CDC m_dcMem;
 
-    CBitmap m_bmpBoardBg;
-    CBitmap m_bmpGridColors;
+    CBitmap          m_bmpBoardBg;
+    CBitmap          m_bmpGridColors;
+    Gdiplus::Image * m_pImgArrows;
 
     CSize m_szBoardBg;
     CSize m_szGridColors;

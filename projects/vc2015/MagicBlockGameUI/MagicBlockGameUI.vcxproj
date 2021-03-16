@@ -223,6 +223,8 @@
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Board.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\BoardString.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Color.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\GdiPlusInitor.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\GdiPlusUtils.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Move.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\SkinWnd.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\MainDlg.h" />
@@ -237,12 +239,15 @@
     <ResourceCompile Include="..\..\..\src\MagicBlockGameUI\MagicBlockGameUI.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Arrows.png" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Board_BG_3x3.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Board_BG_5x5.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Button_Scale9Sprite_Dark.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Button_Scale9Sprite_Gray.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Grid_Colors.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\MagicBlockGameUI.ico" />
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\png1.png" />
+    <Image Include="res\Arrows.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

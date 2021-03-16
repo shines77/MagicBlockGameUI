@@ -468,6 +468,7 @@ BOOL TargetBoardWnd::MoveBoardBlock(const CRect & rect, int index, BOOL bRepaint
     if (index >= 0 && index < TargetX * TargetY) {
         int x1 = index % TargetY;
         int y1 = index / TargetY;
+        std::lock_guard<std::mutex> lock(this->m_pData->uiMutex);
         for (int dir = Direction::First; dir < Direction::Last; dir++) {
             int x2 = x1 + Dir_Offset[dir].x;
             if (x2 < 0 || x2 >= TargetX)
@@ -479,6 +480,7 @@ BOOL TargetBoardWnd::MoveBoardBlock(const CRect & rect, int index, BOOL bRepaint
             if (this->m_pData->targetBoard.grids[move_to] == Color::Empty) {
                 std::swap(this->m_pData->targetBoard.grids[index],
                           this->m_pData->targetBoard.grids[move_to]);
+                lock.~lock_guard();
                 InvalidateRect(rect, bRepaint);
                 break;
             }

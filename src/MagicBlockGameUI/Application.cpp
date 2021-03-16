@@ -7,10 +7,17 @@
 #include <stdlib.h>
 #include <time.h>
 
+#include <gdiplus.h>
+
 #include "AboutDlg.h"
 #include "MainDlg.h"
+#include "GdiPlusInitor.h"
+
+#pragma comment(lib, "GdiPlus.lib")
 
 CAppModule _Module;
+
+ULONG_PTR GdiPlusInitor::s_gdiplusToken = NULL;
 
 int Run(LPTSTR lpstrCmdLine = NULL, int nCmdShow = SW_SHOWDEFAULT)
 {
@@ -36,6 +43,7 @@ int Run(LPTSTR lpstrCmdLine = NULL, int nCmdShow = SW_SHOWDEFAULT)
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrCmdLine, int nCmdShow)
 {
 	HRESULT hRes = ::CoInitialize(NULL);
+    BOOL bGdiPlusInited = GdiPlusInitor::Startup();
 
     ::srand((unsigned int)::time(NULL));
 
@@ -55,6 +63,8 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPTSTR lpstrC
 	int nRet = Run(lpstrCmdLine, nCmdShow);
 
 	_Module.Term();
+
+    GdiPlusInitor::Shutdown();
 	::CoUninitialize();
 
 	return nRet;

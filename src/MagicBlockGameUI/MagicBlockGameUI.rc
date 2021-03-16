@@ -152,6 +152,14 @@ IDB_BITMAP_BTN_SCALE9PSPRITE_DARK BITMAP                  "res\\Button_Scale9Spr
 
 IDB_BITMAP_BTN_SCALE9PSPRITE_GRAY BITMAP                  "res\\Button_Scale9Sprite_Gray.bmp"
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// PNG
+//
+
+IDB_PNG_ARROWS          PNG                     "res\\Arrows.png"
+
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////
 

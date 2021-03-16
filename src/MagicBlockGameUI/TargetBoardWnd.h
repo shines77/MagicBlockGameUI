@@ -3,6 +3,9 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include <gdiplus.h>
+#include <atlimage.h>
+
 #include "SharedData.h"
 #include "Color.h"
 #include "Board.h"
