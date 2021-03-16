@@ -412,6 +412,7 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
             MoveInfo move_arrow[BoardY * BoardX][Direction::Last];
             for (ptrdiff_t i = 0; i < BoardY * BoardX; i++) {
                 for (ptrdiff_t j = 0; j < Direction::Last; j++) {
+                    move_arrow[i][j].color = 0;
                     move_arrow[i][j].dir = uint8_t(-1);
                 }
             }
@@ -428,12 +429,14 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
                     if (move_arrow[from_pos.value][dir].dir == uint8_t(-1)) {
                         move_arrow[from_pos.value][dir].from_pos = from_pos;
                         move_arrow[from_pos.value][dir].move_to_pos = move_to;
-                        move_arrow[from_pos.value][dir].color = 0;
                         move_arrow[from_pos.value][dir].dir = dir;
+                        if (move_arrow[from_pos.value][dir].color == 0) {
+                            move_arrow[from_pos.value][dir].color = 1;
+                            move_cnt++;
+                            if (move_cnt > 20)
+                                break;
+                        }
                     }
-                    move_cnt++;
-                    if (move_cnt > 30)
-                        break;
                 }
                 // Copy move_path[]
                 move_path = this->m_pData->move_path;
@@ -453,10 +456,10 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
                         UINT x = from_pos.value % BoardY;
                         UINT y = from_pos.value / BoardY;
                         PaintBoardArrow(dc, m_pImgArrows, ptBoardBg, x, y, dir, is_opposite);
-                        if (move_arrow[from_pos.value][dir].color == 0) {
-                            move_arrow[from_pos.value][dir].color = 1;
+                        if (move_arrow[from_pos.value][dir].color == 1) {
+                            move_arrow[from_pos.value][dir].color = 0;
                             draw_cnt++;
-                            if (draw_cnt > 13)
+                            if (draw_cnt > 15)
                                 break;
                         }
                     }
