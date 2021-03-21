@@ -10,7 +10,8 @@
 
 CMainDlg::CMainDlg()
     : targetBoardShowOnce_(FALSE), targetBoardWnd_(NULL),
-      playerBoardShowOnce_(FALSE), playerBoardWnd_(NULL)
+      playerBoardShowOnce_(FALSE), playerBoardWnd_(NULL),
+      m_pSkinToolbar(NULL)
 {
     //
 }
@@ -27,6 +28,11 @@ CMainDlg::~CMainDlg()
     {
         delete playerBoardWnd_;
         playerBoardWnd_ = NULL;
+    }
+
+    if (m_pSkinToolbar) {
+        delete m_pSkinToolbar;
+        m_pSkinToolbar = NULL;
     }
 }
 
@@ -57,10 +63,22 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	pLoop->AddMessageFilter(this);
 	pLoop->AddIdleHandler(this);
 
+    this->CreateBoardWnd();
+    this->CreateSimpleToolBar();
+
+	// center the dialog on the screen
+	this->CenterWindow();
+
+	this->UIAddChildWindowContainer(m_hWnd);
+
+	return TRUE;
+}
+
+void CMainDlg::CreateBoardWnd()
+{
     this->m_data.parent = m_hWnd;
 
-    DWORD dwExStyle = WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE;
-    dwExStyle = WS_EX_TOOLWINDOW;
+    DWORD dwExStyle = WS_EX_TOOLWINDOW;
 
     if (targetBoardWnd_ == NULL) {
         targetBoardWnd_ = new TargetBoardWnd(&this->m_data);
@@ -81,13 +99,33 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
                 dwExStyle);
         }
     }
+}
 
-	// center the dialog on the screen
-	CenterWindow();
+void CMainDlg::CreateSimpleToolBar()
+{
+    DWORD dwExStyle = WS_EX_TOOLWINDOW;
 
-	UIAddChildWindowContainer(m_hWnd);
-
-	return TRUE;
+    if (m_pSkinToolbar == NULL) {
+        m_pSkinToolbar = new CSkinToolBar();
+        if (m_pSkinToolbar != NULL) {
+            CRect rcToolbar = { 0, 0, 400, 25 };
+            m_pSkinToolbar->Create(this->m_hWnd, rcToolbar, _T("ToolBar"),
+                WS_CHILD | WS_OVERLAPPED | WS_GROUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                dwExStyle);
+            m_pSkinToolbar->AddItem(0, STBI_STYLE_BUTTON);
+            m_pSkinToolbar->SetItemText(0, _T("111111"));
+            m_pSkinToolbar->SetItemToolTipText(0, _T("111111"));
+            m_pSkinToolbar->AddItem(1, STBI_STYLE_BUTTON);
+            m_pSkinToolbar->SetItemText(1, _T("222222"));
+            m_pSkinToolbar->SetItemToolTipText(1, _T("222222"));
+            m_pSkinToolbar->AddItem(2, STBI_STYLE_BUTTON);
+            m_pSkinToolbar->SetItemText(2, _T("333333"));
+            m_pSkinToolbar->SetItemToolTipText(2, _T("333333"));
+            m_pSkinToolbar->AddItem(3, STBI_STYLE_BUTTON);
+            m_pSkinToolbar->SetItemText(3, _T("444444"));
+            m_pSkinToolbar->SetItemToolTipText(3, _T("444444"));
+        }
+    }
 }
 
 void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
@@ -134,6 +172,21 @@ void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
             SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
 
         //playerBoardWnd_->SetActiveWindow();
+    }
+
+    if (m_pSkinToolbar != NULL) {
+        CRect rcClient;
+        ::GetClientRect(this->m_hWnd, &rcClient);
+
+        CRect rcToolbar;
+        ::GetClientRect(m_pSkinToolbar->m_hWnd, &rcToolbar);
+
+        m_pSkinToolbar->SetWindowPos(NULL,
+            rcClient.left,
+            rcClient.top,
+            rcClient.left + rcToolbar.Width(),
+            rcClient.top + rcToolbar.Height(),
+            SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
     }
 }
 

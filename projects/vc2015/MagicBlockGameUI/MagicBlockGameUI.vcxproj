@@ -208,21 +208,29 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\AboutDlg.cpp" />
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\Application.cpp" />
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\ImageEx.cpp" />
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\MainDlg.cpp" />
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\PlayerBoardWnd.cpp" />
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\SkinManager.cpp" />
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\SkinToolBar.cpp" />
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\SysUtils.cpp" />
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\TargetBoardWnd.cpp" />
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\XmlDocument.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\AboutDlg.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Board.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\BoardString.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Color.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\ImageEx.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\SkinManager.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\SkinToolBar.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\GdiPlusInitor.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\GdiPlusUtils.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Move.h" />
@@ -233,7 +241,9 @@
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Scale9Sprite.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\SharedData.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\stdafx.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\SysUtils.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\TargetBoardWnd.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\XmlDocument.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\MagicBlockGameUI\MagicBlockGameUI.rc" />
@@ -246,7 +256,6 @@
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Button_Scale9Sprite_Gray.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Grid_Colors.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\MagicBlockGameUI.ico" />
-    <Image Include="..\..\..\src\MagicBlockGameUI\res\png1.png" />
     <Image Include="res\Arrows.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

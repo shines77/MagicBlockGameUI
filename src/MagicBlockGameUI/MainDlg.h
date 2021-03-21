@@ -8,6 +8,7 @@
 
 #include "TargetBoardWnd.h"
 #include "PlayerBoardWnd.h"
+#include "SkinToolBar.h"
 
 class CMainDlg : public CDialogImpl<CMainDlg>, public CUpdateUI<CMainDlg>,
 		         public CMessageFilter, public CIdleHandler
@@ -49,11 +50,16 @@ public:
 
 	void CloseDialog(int nVal);
 
+protected:
+    void CreateBoardWnd();
+    void CreateSimpleToolBar();
+
 private:
     BOOL                targetBoardShowOnce_;
     BOOL                playerBoardShowOnce_;
     TargetBoardWnd *    targetBoardWnd_;
     PlayerBoardWnd *    playerBoardWnd_;
+    CSkinToolBar *      m_pSkinToolbar;
 
     SharedData<BoardX, BoardY, TargetX, TargetY> m_data;
 };

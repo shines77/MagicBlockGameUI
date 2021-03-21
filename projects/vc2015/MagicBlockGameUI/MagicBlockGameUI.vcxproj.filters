@@ -29,6 +29,21 @@
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\PlayerBoardWnd.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\SkinToolBar.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\ImageEx.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\SkinManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\XmlDocument.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\SysUtils.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\AboutDlg.h">
@@ -76,6 +91,21 @@
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\GdiPlusInitor.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\SkinToolBar.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\ImageEx.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\SkinManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\XmlDocument.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\SysUtils.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\MagicBlockGameUI\MagicBlockGameUI.rc">
@@ -101,8 +131,11 @@
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Button_Scale9Sprite_Gray.bmp">
       <Filter>res</Filter>
     </Image>
-    <Image Include="..\..\..\src\MagicBlockGameUI\res\png1.png" />
-    <Image Include="res\Arrows.png" />
-    <Image Include="..\..\..\src\MagicBlockGameUI\res\Arrows.png" />
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Arrows.png">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="res\Arrows.png">
+      <Filter>res</Filter>
+    </Image>
   </ItemGroup>
 </Project>
