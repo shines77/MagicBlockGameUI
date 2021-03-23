@@ -44,6 +44,9 @@
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\SysUtils.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\CommandManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\AboutDlg.h">
@@ -106,6 +109,9 @@
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\SysUtils.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\CommandManager.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\..\src\MagicBlockGameUI\MagicBlockGameUI.rc">
@@ -135,6 +141,9 @@
       <Filter>res</Filter>
     </Image>
     <Image Include="res\Arrows.png">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\toolbar1.bmp">
       <Filter>res</Filter>
     </Image>
   </ItemGroup>

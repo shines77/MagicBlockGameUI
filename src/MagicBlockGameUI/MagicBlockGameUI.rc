@@ -152,6 +152,8 @@ IDB_BITMAP_BTN_SCALE9PSPRITE_DARK BITMAP                  "res\\Button_Scale9Spr
 
 IDB_BITMAP_BTN_SCALE9PSPRITE_GRAY BITMAP                  "res\\Button_Scale9Sprite_Gray.bmp"
 
+IDR_TOOLBAR_GENERAL     BITMAP                  "res\\toolbar1.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -159,6 +161,48 @@ IDB_BITMAP_BTN_SCALE9PSPRITE_GRAY BITMAP                  "res\\Button_Scale9Spr
 //
 
 IDB_PNG_ARROWS          PNG                     "res\\Arrows.png"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_TOOLBAR_GENERAL TOOLBAR 16, 15
+BEGIN
+    BUTTON      ID_TB_TARGET_BOARD_SWITCH
+    BUTTON      ID_TB_PLAYER_BOARD_SWITCH
+    BUTTON      ID_TB_SHOW_MOVE_PATH
+    BUTTON      ID_TB_SHOW_CORRECT_GRID
+    BUTTON      ID_EDIT_UNDO
+    BUTTON      ID_EDIT_REDO
+    BUTTON      ID_APP_ABOUT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    ID_TB_TARGET_BOARD_SWITCH "目标窗口"
+    ID_TB_PLAYER_BOARD_SWITCH "玩家棋盘"
+    ID_TB_SHOW_MOVE_PATH    "显示移动路径"
+    ID_TB_SHOW_CORRECT_GRID "显示已正确的格子"
+END
+
+STRINGTABLE
+BEGIN
+    ID_EDIT_UNDO            "撤销"
+    ID_EDIT_REDO            "重做"
+END
+
+STRINGTABLE
+BEGIN
+    ID_APP_ABOUT            "关于"
+END
 
 #endif    // 中文(简体，中国) resources
 /////////////////////////////////////////////////////////////////////////////

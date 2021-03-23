@@ -43,7 +43,8 @@ BOOL CMainDlg::PreTranslateMessage(MSG * pMsg)
 
 BOOL CMainDlg::OnIdle()
 {
-	UIUpdateChildWindows();
+    this->UIUpdateToolBar();
+	this->UIUpdateChildWindows();
 	return FALSE;
 }
 
@@ -64,19 +65,26 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
 	pLoop->AddIdleHandler(this);
 
     this->CreateBoardWnd();
-    this->CreateSimpleToolBar();
+
+    //
+    // See: https://www.codeproject.com/Articles/3948/WTL-for-MFC-Programmers-Part-III-Toolbars-and-Stat
+    //
+    //this->CreateSimpleToolBar(IDR_TOOLBAR_GENERAL, ATL_SIMPLE_TOOLBAR_STYLE | TBSTYLE_FLAT | TBSTYLE_LIST, ATL_IDW_TOOLBAR);
+    this->CreateSimpleToolBar(IDR_TOOLBAR_GENERAL, ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_FLAT | TBSTYLE_LIST, ATL_IDW_TOOLBAR);
+
+    this->UIAddToolBar(m_wndToolBar.m_hWnd);
 
 	// center the dialog on the screen
 	this->CenterWindow();
 
-	this->UIAddChildWindowContainer(m_hWnd);
+	this->UIAddChildWindowContainer(this->m_hWnd);
 
 	return TRUE;
 }
 
-void CMainDlg::CreateBoardWnd()
+BOOL CMainDlg::CreateBoardWnd()
 {
-    this->m_data.parent = m_hWnd;
+    this->m_data.parent = this->m_hWnd;
 
     DWORD dwExStyle = WS_EX_TOOLWINDOW;
 
@@ -99,9 +107,11 @@ void CMainDlg::CreateBoardWnd()
                 dwExStyle);
         }
     }
+
+    return TRUE;
 }
 
-void CMainDlg::CreateSimpleToolBar()
+BOOL CMainDlg::CreateSimpleToolBar(UINT nResourceID, DWORD dwStyle, UINT nID)
 {
     DWORD dwExStyle = WS_EX_TOOLWINDOW;
 
@@ -126,6 +136,20 @@ void CMainDlg::CreateSimpleToolBar()
             m_pSkinToolbar->SetItemToolTipText(3, _T("444444"));
         }
     }
+
+    //
+    // See: https://www.codeproject.com/Articles/3948/WTL-for-MFC-Programmers-Part-III-Toolbars-and-Stat
+    //
+    if (m_wndToolBar.m_hWnd == NULL) {
+        m_wndToolBar = CFrameWindowImplBase<CWindow, CFrameWinTraits>::CreateSimpleToolBarCtrl(
+                                this->m_hWnd, nResourceID, FALSE, dwStyle, nID);
+
+        //CWindow wndRebar = CFrameWindowImplBase<CWindow, CFrameWinTraits>::CreateSimpleReBarCtrl(this->m_hWnd, ATL_SIMPLE_REBAR_NOBORDER_STYLE, nID);
+        CWindow wndRebar = CFrameWindowImplBase<CWindow, CFrameWinTraits>::CreateSimpleReBarCtrl(this->m_hWnd, ATL_SIMPLE_REBAR_STYLE, nID);
+        CFrameWindowImplBase<CWindow, CFrameWinTraits>::AddSimpleReBarBandCtrl(wndRebar.m_hWnd, m_wndToolBar.m_hWnd);
+    }
+
+    return (m_wndToolBar.m_hWnd != NULL);
 }
 
 void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
@@ -173,7 +197,7 @@ void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
 
         //playerBoardWnd_->SetActiveWindow();
     }
-
+#if 0
     if (m_pSkinToolbar != NULL) {
         CRect rcClient;
         ::GetClientRect(this->m_hWnd, &rcClient);
@@ -187,6 +211,21 @@ void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)
             rcClient.left + rcToolbar.Width(),
             rcClient.top + rcToolbar.Height(),
             SWP_SHOWWINDOW | SWP_NOACTIVATE | SWP_NOSIZE);
+    }
+#endif
+    if (m_wndToolBar.m_hWnd != NULL) {
+        CRect rcClient;
+        ::GetClientRect(this->m_hWnd, &rcClient);
+
+        CRect rcToolbar;
+        ::GetClientRect(m_wndToolBar.m_hWnd, &rcToolbar);
+
+        m_wndToolBar.SetWindowPos(NULL,
+            rcClient.left,
+            rcClient.top,
+            rcClient.left + rcToolbar.Width(),
+            rcClient.top + rcToolbar.Height(),
+            SWP_SHOWWINDOW | SWP_NOACTIVATE);
     }
 }
 

@@ -137,17 +137,17 @@ BOOL Path::DirectoryIsExists(LPCTSTR lpszPath)
 }
  
  
-BOOL Path::CreateDirectory(LPCTSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
+BOOL Path::CreateDirectory(LPCTSTR lpszPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes)
 {
 	TCHAR cPath[MAX_PATH] = {0};
 	TCHAR cTmpPath[MAX_PATH] = {0};
 	TCHAR * lpPos = NULL;
 	TCHAR cTmp = _T('\0');
  
-	if (NULL == lpPathName || NULL == *lpPathName)
+	if (NULL == lpszPathName || NULL == *lpszPathName)
 		return FALSE;
  
-	_tcsncpy_s(cPath, _countof(cPath) - 1, lpPathName, MAX_PATH);
+	_tcsncpy_s(cPath, _countof(cPath) - 1, lpszPathName, MAX_PATH);
  
 	for (int i = 0; i < (int)_tcslen(cPath); i++)
 	{

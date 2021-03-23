@@ -9,6 +9,7 @@
 #include "SharedData.h"
 #include "Color.h"
 #include "Board.h"
+#include "CommandManager.h"
 #include "Scale9Sprite.h"
 #include "SkinWnd.h"
 
@@ -85,6 +86,7 @@ protected:
 
 private:
     SharedData<BoardX, BoardY, TargetX, TargetY> * m_pData;
+    CommandManager   m_cmdMgr;
 
     CDC m_dcMem;
 

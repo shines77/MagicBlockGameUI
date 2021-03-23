@@ -208,6 +208,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\AboutDlg.cpp" />
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\Application.cpp" />
+    <ClCompile Include="..\..\..\src\MagicBlockGameUI\CommandManager.cpp" />
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\ImageEx.cpp" />
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\MainDlg.cpp" />
     <ClCompile Include="..\..\..\src\MagicBlockGameUI\PlayerBoardWnd.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Board.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\BoardString.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\Color.h" />
+    <ClInclude Include="..\..\..\src\MagicBlockGameUI\CommandManager.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\ImageEx.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\SkinManager.h" />
     <ClInclude Include="..\..\..\src\MagicBlockGameUI\SkinToolBar.h" />
@@ -256,6 +258,7 @@
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Button_Scale9Sprite_Gray.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Grid_Colors.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\MagicBlockGameUI.ico" />
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\toolbar1.bmp" />
     <Image Include="res\Arrows.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

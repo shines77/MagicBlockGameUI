@@ -25,7 +25,7 @@ public:
 	static BOOL IsDirectory(LPCTSTR lpszPath);
 	static BOOL FileIsExists(LPCTSTR lpszFileName);
 	static BOOL DirectoryIsExists(LPCTSTR lpszPath);
-	static BOOL CreateDirectory(LPCTSTR lpPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes = NULL);
+	static BOOL CreateDirectory(LPCTSTR lpszPathName, LPSECURITY_ATTRIBUTES lpSecurityAttributes = NULL);
  
 	static tstring GetPathRoot(LPCTSTR lpszPath);
 	static tstring GetDirectoryName(LPCTSTR lpszPath);

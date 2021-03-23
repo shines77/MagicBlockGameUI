@@ -82,6 +82,8 @@ PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pD
         m_szGridColors.cy = 0;
     }
 
+    m_cmdMgr.SetInitialBoard();
+
     for (UINT y = 0; y < BoardY; y++) {
         for (UINT x = 0; x < BoardX; x++) {
             UINT pos = y * BoardY + x;

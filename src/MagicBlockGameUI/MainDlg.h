@@ -23,6 +23,9 @@ public:
 	virtual BOOL OnIdle();
 
 	BEGIN_UPDATE_UI_MAP(CMainDlg)
+        UPDATE_ELEMENT(ID_VIEW_TOOLBAR, UPDUI_MENUPOPUP | UPDUI_TOOLBAR)
+        UPDATE_ELEMENT(ID_VIEW_STATUS_BAR, UPDUI_MENUPOPUP | UPDUI_TOOLBAR)
+        UPDATE_ELEMENT(ID_APP_ABOUT, UPDUI_MENUPOPUP | UPDUI_TOOLBAR)
 	END_UPDATE_UI_MAP()
 
 	BEGIN_MSG_MAP(CMainDlg)
@@ -51,15 +54,17 @@ public:
 	void CloseDialog(int nVal);
 
 protected:
-    void CreateBoardWnd();
-    void CreateSimpleToolBar();
+    BOOL CreateBoardWnd();
+    BOOL CreateSimpleToolBar(UINT nResourceID = 0, DWORD dwStyle = ATL_SIMPLE_TOOLBAR_STYLE, UINT nID = ATL_IDW_TOOLBAR);
 
 private:
     BOOL                targetBoardShowOnce_;
     BOOL                playerBoardShowOnce_;
     TargetBoardWnd *    targetBoardWnd_;
     PlayerBoardWnd *    playerBoardWnd_;
+
     CSkinToolBar *      m_pSkinToolbar;
+    CWindow             m_wndToolBar;
 
     SharedData<BoardX, BoardY, TargetX, TargetY> m_data;
 };
