@@ -8,7 +8,7 @@
 
 #define WM_COMMAND_EXECUTE  (WM_USER + 0x01)
 
-struct CommandType {
+struct CmdType {
     enum T {
         Normal,
         Redo,
@@ -22,7 +22,7 @@ public:
     Command() {}
     virtual ~Command() {}
 
-    virtual LRESULT Execute(HWND hwnd, CommandType::T cmdType = CommandType::Normal) = 0;
+    virtual LRESULT Execute(HWND hwnd, CmdType::T cmdType = CmdType::Normal) = 0;
 };
 
 class MoveCommand final : public Command
@@ -40,7 +40,7 @@ public:
 
     virtual ~MoveCommand() {}
 
-    LRESULT Execute(HWND hwnd, CommandType::T cmdType = CommandType::Normal) final {
+    LRESULT Execute(HWND hwnd, CmdType::T cmdType = CmdType::Normal) final {
         LRESULT result = -1;
         if (hwnd != NULL && ::IsWindow(hwnd)) {
             result = ::SendMessage(hwnd, WM_COMMAND_EXECUTE, (WPARAM)cmdType, 0);
@@ -52,9 +52,9 @@ public:
 class CommandManager
 {
 private:
+    HWND                    hwnd_;
     std::stack<Command *>   undo_;
     std::stack<Command *>   redo_;
-    HWND                    hwnd_;
 
 private:
     void ClearUndo() {
@@ -72,7 +72,7 @@ private:
     }
 
 public:
-    CommandManager(HWND hwnd) : hwnd_(hwnd) {
+    CommandManager(HWND hwnd = NULL) : hwnd_(hwnd) {
     }
 
     virtual ~CommandManager() {
@@ -94,11 +94,12 @@ public:
 
     BOOL AddCommand(Command * cmd) {
         if (cmd != NULL) {
-            LRESULT result = cmd->Execute(this->hwnd_);
-
-            this->ClearRedo();
-            this->undo_.push(cmd);
-            return TRUE;
+            LRESULT result = cmd->Execute(this->hwnd_, CmdType::Normal);
+            if (SUCCEEDED(result)) {
+                this->undo_.push(cmd);
+                this->ClearRedo();
+                return TRUE;
+            }
         }
         return FALSE;
     }
@@ -123,9 +124,13 @@ public:
             this->redo_.push(cmd);
             this->undo_.pop();
 
-            cmd = this->undo_.top();
-            LRESULT result = cmd->Execute(this->hwnd_, CommandType::Undo);
-            return TRUE;
+            if (!this->undo_.empty()) {
+                cmd = this->undo_.top();
+                if (cmd != NULL) {
+                    LRESULT result = cmd->Execute(this->hwnd_, CmdType::Undo);
+                    return SUCCEEDED(result);
+                }
+            }
         }
         return FALSE;
     }
@@ -137,11 +142,12 @@ public:
 
         Command * cmd = this->redo_.top();
         if (cmd != NULL) {
-            LRESULT result = cmd->Execute(this->hwnd_, CommandType::Redo);
-
-            this->redo_.pop();
-            this->undo_.push(cmd);
-            return TRUE;
+            LRESULT result = cmd->Execute(this->hwnd_, CmdType::Redo);
+            if (SUCCEEDED(result)) {
+                this->undo_.push(cmd);
+                this->redo_.pop();
+                return TRUE;
+            }
         }
         return FALSE;
     }

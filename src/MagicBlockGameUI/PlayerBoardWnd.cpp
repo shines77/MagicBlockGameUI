@@ -82,8 +82,6 @@ PlayerBoardWnd::PlayerBoardWnd(SharedData<BoardX, BoardY, TargetX, TargetY> * pD
         m_szGridColors.cy = 0;
     }
 
-    m_cmdMgr.SetInitialBoard();
-
     for (UINT y = 0; y < BoardY; y++) {
         for (UINT x = 0; x < BoardX; x++) {
             UINT pos = y * BoardY + x;
@@ -138,6 +136,9 @@ int PlayerBoardWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	HICON hIconSmall = AtlLoadIconImage(IDR_MAINFRAME, LR_DEFAULTCOLOR,
         ::GetSystemMetrics(SM_CXSMICON), ::GetSystemMetrics(SM_CYSMICON));
 	SetIcon(hIconSmall, FALSE);
+
+    m_cmdMgr.SetOwner(this->m_hWnd);
+    m_cmdMgr.SetInitialBoard();
 
     ShowWindow(SW_SHOWNORMAL);
 
