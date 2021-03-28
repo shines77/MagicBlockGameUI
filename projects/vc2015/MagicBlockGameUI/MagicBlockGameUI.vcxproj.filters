@@ -143,7 +143,16 @@
     <Image Include="res\Arrows.png">
       <Filter>res</Filter>
     </Image>
-    <Image Include="..\..\..\src\MagicBlockGameUI\res\toolbar1.bmp">
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\toolbar.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="res\Toolbar_icons.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Toolbar_icons.bmp">
+      <Filter>res</Filter>
+    </Image>
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Toolbar_icons_gray.bmp">
       <Filter>res</Filter>
     </Image>
   </ItemGroup>

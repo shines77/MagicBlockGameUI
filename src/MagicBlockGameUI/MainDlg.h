@@ -35,6 +35,8 @@ public:
 		COMMAND_ID_HANDLER(IDOK, OnOK)
 		COMMAND_ID_HANDLER(IDCANCEL, OnCancel)
 
+        NOTIFY_CODE_HANDLER(TTN_NEEDTEXT, OnToolTipText)
+
         MSG_WM_SHOWWINDOW(OnShowWindow)
 	END_MSG_MAP()
 
@@ -55,7 +57,10 @@ public:
 
 protected:
     BOOL CreateBoardWnd();
-    BOOL CreateSimpleToolBar(UINT nResourceID = 0, DWORD dwStyle = ATL_SIMPLE_TOOLBAR_STYLE, UINT nID = ATL_IDW_TOOLBAR);
+    BOOL CreateSimpleToolBar(UINT nResourceID = 0, DWORD dwStyle = ATL_SIMPLE_TOOLBAR_STYLE,
+                             UINT nID = ATL_IDW_TOOLBAR);
+
+    BOOL OnToolTipText(UINT uID, NMHDR * pNMHDR, BOOL & bHandled);
 
 private:
     BOOL                targetBoardShowOnce_;

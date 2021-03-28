@@ -69,8 +69,12 @@ LRESULT CMainDlg::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam
     //
     // See: https://www.codeproject.com/Articles/3948/WTL-for-MFC-Programmers-Part-III-Toolbars-and-Stat
     //
-    //this->CreateSimpleToolBar(IDR_TOOLBAR_GENERAL, ATL_SIMPLE_TOOLBAR_STYLE | TBSTYLE_FLAT | TBSTYLE_LIST, ATL_IDW_TOOLBAR);
-    this->CreateSimpleToolBar(IDR_TOOLBAR_GENERAL, ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_FLAT | TBSTYLE_LIST, ATL_IDW_TOOLBAR);
+    this->CreateSimpleToolBar(IDR_TOOLBAR_GENERAL,
+        ATL_SIMPLE_TOOLBAR_STYLE | TBSTYLE_FLAT | TBSTYLE_LIST,
+        ATL_IDW_TOOLBAR);
+    //this->CreateSimpleToolBar(IDR_TOOLBAR_GENERAL,
+    //    ATL_SIMPLE_TOOLBAR_PANE_STYLE | TBSTYLE_LIST,
+    //    ATL_IDW_TOOLBAR);
 
     this->UIAddToolBar(m_wndToolBar.m_hWnd);
 
@@ -144,12 +148,73 @@ BOOL CMainDlg::CreateSimpleToolBar(UINT nResourceID, DWORD dwStyle, UINT nID)
         m_wndToolBar = CFrameWindowImplBase<CWindow, CFrameWinTraits>::CreateSimpleToolBarCtrl(
                                 this->m_hWnd, nResourceID, FALSE, dwStyle, nID);
 
-        //CWindow wndRebar = CFrameWindowImplBase<CWindow, CFrameWinTraits>::CreateSimpleReBarCtrl(this->m_hWnd, ATL_SIMPLE_REBAR_NOBORDER_STYLE, nID);
-        CWindow wndRebar = CFrameWindowImplBase<CWindow, CFrameWinTraits>::CreateSimpleReBarCtrl(this->m_hWnd, ATL_SIMPLE_REBAR_STYLE, nID);
+        //m_wndToolBar.SetBarStyle(CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC);
+        m_wndToolBar.ModifyStyle(0, TBSTYLE_FLAT);
+
+        CBitmap bitmap;
+        if (bitmap.LoadBitmap(IDB_BITMAP_TOOLBAR)) {
+            CImageList imageList;
+            if (imageList.Create(16, 16, ILC_COLOR8 | ILC_MASK, 8, 1)) {
+                imageList.Add(bitmap.m_hBitmap, RGB(45, 45, 45));
+                m_wndToolBar.SendMessage(TB_SETIMAGELIST, 0, (LPARAM)imageList.m_hImageList);
+                imageList.Detach();
+            }
+            bitmap.Detach();
+        }
+
+        CWindow wndRebar = CFrameWindowImplBase<CWindow, CFrameWinTraits>::CreateSimpleReBarCtrl(this->m_hWnd, ATL_SIMPLE_REBAR_NOBORDER_STYLE, nID);
+        //CWindow wndRebar = CFrameWindowImplBase<CWindow, CFrameWinTraits>::CreateSimpleReBarCtrl(this->m_hWnd, ATL_SIMPLE_REBAR_STYLE, nID);
         CFrameWindowImplBase<CWindow, CFrameWinTraits>::AddSimpleReBarBandCtrl(wndRebar.m_hWnd, m_wndToolBar.m_hWnd);
     }
 
     return (m_wndToolBar.m_hWnd != NULL);
+}
+
+BOOL CMainDlg::OnToolTipText(UINT uID, NMHDR * pNMHDR, BOOL & bHandled)
+{
+    ATLASSERT(pNMHDR->code == TTN_NEEDTEXTA || pNMHDR->code == TTN_NEEDTEXTW);
+
+    TOOLTIPTEXTA * pTTTA = (TOOLTIPTEXTA *)pNMHDR;
+    TOOLTIPTEXTW * pTTTW = (TOOLTIPTEXTW *)pNMHDR;
+
+    CString strTipText;
+    UINT nID = pNMHDR->idFrom;
+
+    if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
+        pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
+    {
+        // idFrom is Toolbar's HWND
+        nID = ::GetDlgCtrlID((HWND)nID);
+    }
+
+    // It's not a separator
+    if (nID != 0)
+    {
+        strTipText.LoadString(nID);
+        strTipText = strTipText.Mid(strTipText.Find(_T('\n'), 0) + 1);
+
+#ifndef _UNICODE
+        if (pNMHDR->code == TTN_NEEDTEXTA)
+            lstrcpyn(pTTTA->szText, strTipText, sizeof(pTTTA->szText));
+        else
+            _mbstowcsz(pTTTW->szText, strTipText, sizeof(pTTTW->szText));
+#else
+        if (pNMHDR->code == TTN_NEEDTEXTA)
+            _wcstombsz(pTTTA->szText, strTipText, sizeof(pTTTA->szText));
+        else
+            lstrcpyn(pTTTW->szText, strTipText, sizeof(pTTTW->szText));
+#endif
+
+        // Let the tooltip of toolbar always on top
+        ::SetWindowPos(pNMHDR->hwndFrom, HWND_TOP, 0, 0, 0, 0,
+            SWP_NOACTIVATE | SWP_NOSIZE | SWP_NOMOVE | SWP_NOOWNERZORDER);
+
+        bHandled = TRUE;
+        return TRUE;
+    }
+
+    bHandled = FALSE;
+    return FALSE;
 }
 
 void CMainDlg::OnShowWindow(BOOL bShow, UINT nStatus)

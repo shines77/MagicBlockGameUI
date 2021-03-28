@@ -258,8 +258,11 @@
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Button_Scale9Sprite_Gray.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\Grid_Colors.bmp" />
     <Image Include="..\..\..\src\MagicBlockGameUI\res\MagicBlockGameUI.ico" />
-    <Image Include="..\..\..\src\MagicBlockGameUI\res\toolbar1.bmp" />
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\toolbar.bmp" />
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Toolbar_icons.bmp" />
+    <Image Include="..\..\..\src\MagicBlockGameUI\res\Toolbar_icons_gray.bmp" />
     <Image Include="res\Arrows.png" />
+    <Image Include="res\Toolbar_icons.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

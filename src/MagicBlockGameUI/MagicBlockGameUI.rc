@@ -152,7 +152,9 @@ IDB_BITMAP_BTN_SCALE9PSPRITE_DARK BITMAP                  "res\\Button_Scale9Spr
 
 IDB_BITMAP_BTN_SCALE9PSPRITE_GRAY BITMAP                  "res\\Button_Scale9Sprite_Gray.bmp"
 
-IDR_TOOLBAR_GENERAL     BITMAP                  "res\\toolbar1.bmp"
+IDR_TOOLBAR_GENERAL     BITMAP                  "res\\toolbar.bmp"
+
+IDB_BITMAP_TOOLBAR      BITMAP                  "res\\Toolbar_icons_gray.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -168,14 +170,23 @@ IDB_PNG_ARROWS          PNG                     "res\\Arrows.png"
 // Toolbar
 //
 
-IDR_TOOLBAR_GENERAL TOOLBAR 16, 15
+IDR_TOOLBAR_GENERAL TOOLBAR 16, 16
 BEGIN
-    BUTTON      ID_TB_TARGET_BOARD_SWITCH
-    BUTTON      ID_TB_PLAYER_BOARD_SWITCH
-    BUTTON      ID_TB_SHOW_MOVE_PATH
-    BUTTON      ID_TB_SHOW_CORRECT_GRID
+    BUTTON      ID_ACTION_NEW_GAME
+    BUTTON      ID_FILE_OPEN
+    BUTTON      ID_FILE_SAVE
+    BUTTON      ID_FILE_SAVE_AS
+    SEPARATOR
+    BUTTON      ID_VIEW_SHOW_TARGET_BOARD
+    BUTTON      ID_VIEW_SHOW_PLAYER_BOARD
+    BUTTON      ID_VIEW_SHOW_MOVE_PATH
+    BUTTON      ID_VIEW_SHOW_CORRECT_GRID
+    SEPARATOR
+    BUTTON      ID_EDIT_MOVE_TO_FIRST
     BUTTON      ID_EDIT_UNDO
     BUTTON      ID_EDIT_REDO
+    BUTTON      ID_EDIT_MOVE_TO_LAST
+    SEPARATOR
     BUTTON      ID_APP_ABOUT
 END
 
@@ -187,21 +198,36 @@ END
 
 STRINGTABLE
 BEGIN
-    ID_TB_TARGET_BOARD_SWITCH "目标窗口"
-    ID_TB_PLAYER_BOARD_SWITCH "玩家棋盘"
-    ID_TB_SHOW_MOVE_PATH    "显示移动路径"
-    ID_TB_SHOW_CORRECT_GRID "显示已正确的格子"
+    ID_VIEW_SHOW_TARGET_BOARD "显示/隐藏 目标窗口"
+    ID_VIEW_SHOW_PLAYER_BOARD "显示/隐藏 玩家棋盘"
+    ID_VIEW_SHOW_MOVE_PATH  "显示/关闭 移动路径"
+    ID_VIEW_SHOW_CORRECT_GRID "显示/关闭 已归位的块"
+    ID_ACTION_NEW_GAME      "创建新游戏"
+    ID_EDIT_MOVE_TO_FIRST   "跳到最前"
+    ID_EDIT_MOVE_TO_LAST    "跳到最后"
 END
 
 STRINGTABLE
 BEGIN
-    ID_EDIT_UNDO            "撤销"
-    ID_EDIT_REDO            "重做"
+    ID_SEPARATOR            "-"
+END
+
+STRINGTABLE
+BEGIN
+    ID_EDIT_UNDO            "后退"
+    ID_EDIT_REDO            "前进"
 END
 
 STRINGTABLE
 BEGIN
     ID_APP_ABOUT            "关于"
+END
+
+STRINGTABLE
+BEGIN
+    ID_FILE_OPEN            "打开文件"
+    ID_FILE_SAVE            "保存文件"
+    ID_FILE_SAVE_AS         "保存文件为..."
 END
 
 #endif    // 中文(简体，中国) resources
