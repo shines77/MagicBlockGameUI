@@ -89,7 +89,7 @@ int CSkinToolBar::AddItem(int nID, DWORD dwStyle)
 	lpItem->m_nID = nID;
 	lpItem->m_dwStyle = dwStyle;
 	m_arrItems.push_back(lpItem);
-	return m_arrItems.size() - 1;
+	return (int)(m_arrItems.size() - 1);
 }
  
 void CSkinToolBar::SetItemStyle(int nIndex, int dwStyle)

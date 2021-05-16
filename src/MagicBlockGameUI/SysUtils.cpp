@@ -1,6 +1,9 @@
 
 #include "stdafx.h"
 #include "SysUtils.h"
+
+#include <stddef.h>
+#include <stdint.h>
  
 namespace SysUtils {
 
@@ -32,7 +35,7 @@ tstring Path::GetCurDir()
 	TCHAR szCurDir[MAX_PATH] = {0};
 	::GetCurrentDirectory(MAX_PATH, szCurDir);
  
-	DWORD dwLen = _tcslen(szCurDir);
+	size_t dwLen = _tcslen(szCurDir);
 	if (dwLen <= 0)
 		return _T("");
  
@@ -50,7 +53,7 @@ tstring Path::GetTempPath()
 	TCHAR szTempPath[MAX_PATH] = {0};
 	::GetTempPath(MAX_PATH, szTempPath);
  
-	DWORD dwLen = _tcslen(szTempPath);
+	size_t dwLen = _tcslen(szTempPath);
 	if (dwLen <= 0)
 		return _T("");
  
@@ -244,7 +247,7 @@ tstring Path::GetFileNameWithoutExtension(LPCTSTR lpszPath)
 		}
 	}
  
-	int nPos = strPath.rfind(_T('.'));
+	size_t nPos = strPath.rfind(_T('.'));
 	if (nPos != tstring::npos)
 		strPath = strPath.substr(0, nPos);
  

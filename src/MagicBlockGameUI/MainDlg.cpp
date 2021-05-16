@@ -178,13 +178,14 @@ BOOL CMainDlg::OnToolTipText(UINT uID, NMHDR * pNMHDR, BOOL & bHandled)
     TOOLTIPTEXTW * pTTTW = (TOOLTIPTEXTW *)pNMHDR;
 
     CString strTipText;
-    UINT nID = pNMHDR->idFrom;
+    UINT_PTR nIDFrom = pNMHDR->idFrom;
+    UINT nID = 0;
 
     if (pNMHDR->code == TTN_NEEDTEXTA && (pTTTA->uFlags & TTF_IDISHWND) ||
         pNMHDR->code == TTN_NEEDTEXTW && (pTTTW->uFlags & TTF_IDISHWND))
     {
         // idFrom is Toolbar's HWND
-        nID = ::GetDlgCtrlID((HWND)nID);
+        nID = (UINT)::GetDlgCtrlID((HWND)nIDFrom);
     }
 
     // It's not a separator
