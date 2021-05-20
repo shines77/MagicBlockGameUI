@@ -9,7 +9,7 @@ static const char * DefaultTargetBoard = {
     "YWR"
 };
 
-#if 1
+#if 0
 static const char * DefaultPlayerBoard = {
     "RRYGG"
     "RRYGG"

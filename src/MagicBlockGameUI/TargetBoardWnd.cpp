@@ -469,7 +469,7 @@ BOOL TargetBoardWnd::MoveBoardBlock(const CRect & rect, int index, BOOL bRepaint
         int x1 = index % TargetY;
         int y1 = index / TargetY;
         std::lock_guard<std::mutex> lock(this->m_pData->uiMutex);
-        for (int dir = Direction::First; dir < Direction::Last; dir++) {
+        for (int dir = 0; dir < MAX_DIR; dir++) {
             int x2 = x1 + Dir_Offset[dir].x;
             if (x2 < 0 || x2 >= TargetX)
                 continue;

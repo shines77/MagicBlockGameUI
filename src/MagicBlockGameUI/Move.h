@@ -55,7 +55,7 @@ struct Move {
 
 struct MoveInfo {
     Position    from_pos;
-    Position    move_to_pos;
+    Position    move_pos;
     uint8_t     color;
     uint8_t     dir;
 };
@@ -72,14 +72,14 @@ static const Offset Dir_Offset[] = {
     {  1,  0 }
 };
 
+static const size_t MAX_DIR = 4;
+
 struct Direction {
     enum {
-        First,
-        Down = First,
+        Down,
         Left,
         Up,
-        Right,
-        Last
+        Right
     };
 
     template <size_t BoardX, size_t BoardY>
@@ -92,7 +92,7 @@ struct Direction {
         int offset_x = to_x - from_x;
         int offset_y = to_y - from_y;
 
-        for (size_t dir = Direction::First; dir < Direction::Last; dir++) {
+        for (size_t dir = 0; dir < MAX_DIR; dir++) {
             if ((offset_x == Dir_Offset[dir].x) &&
                 (offset_y == Dir_Offset[dir].y)) {
                 return (uint8_t)dir;

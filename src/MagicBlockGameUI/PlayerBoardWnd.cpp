@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "resource.h"
 
+#include <assert.h>
 #include <mutex>
 
 #include "PlayerBoardWnd.h"
@@ -412,9 +413,9 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
             }
 
             std::vector<MoveInfo> move_path;
-            MoveInfo move_arrow[BoardY * BoardX][Direction::Last];
+            MoveInfo move_arrow[BoardY * BoardX][MAX_DIR];
             for (ptrdiff_t i = 0; i < BoardY * BoardX; i++) {
-                for (ptrdiff_t j = 0; j < Direction::Last; j++) {
+                for (ptrdiff_t j = 0; j < MAX_DIR; j++) {
                     move_arrow[i][j].color = 0;
                     move_arrow[i][j].dir = uint8_t(-1);
                 }
@@ -427,11 +428,11 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
                 for (ptrdiff_t i = cmove_path.size() - 1; i >= 0; i--) {
                     const MoveInfo move_info = cmove_path[i];
                     Position from_pos = move_info.from_pos;
-                    Position move_to = move_info.move_to_pos;
+                    Position move_to = move_info.move_pos;
                     UINT dir = move_info.dir;
                     if (move_arrow[from_pos.value][dir].dir == uint8_t(-1)) {
                         move_arrow[from_pos.value][dir].from_pos = from_pos;
-                        move_arrow[from_pos.value][dir].move_to_pos = move_to;
+                        move_arrow[from_pos.value][dir].move_pos = move_to;
                         move_arrow[from_pos.value][dir].dir = dir;
                         if (move_arrow[from_pos.value][dir].color == 0) {
                             move_arrow[from_pos.value][dir].color = 1;
@@ -450,15 +451,15 @@ void PlayerBoardWnd::DoPaint(CDCHandle dc)
                 for (ptrdiff_t i = move_path.size() - 1; i >= 0; i--) {
                     const MoveInfo move_info = move_path[i];
                     Position from_pos = move_info.from_pos;
-                    Position move_to = move_info.move_to_pos;
+                    Position move_to = move_info.move_pos;
                     UINT dir = move_info.dir;
                     ATLASSERT(move_arrow[from_pos.value][dir].dir != uint8_t(-1));
                     int opp_dir = Direction::getOppDir(dir);
                     bool is_opposite = (move_arrow[move_to.value][opp_dir].dir != uint8_t(-1));
-                    if (dir >= Direction::First && dir < Direction::Last) {
+                    if (dir >= 0 && dir < MAX_DIR) {
                         UINT x = from_pos.value % BoardY;
                         UINT y = from_pos.value / BoardY;
-                        PaintBoardArrow(dc, m_pImgArrows, ptBoardBg, x, y, dir, is_opposite);
+                        PaintBoardArrow(dc, m_pImgArrows, ptBoardBg, x, y, dir, opp_dir, is_opposite);
                         if (move_arrow[from_pos.value][dir].color == 1) {
                             move_arrow[from_pos.value][dir].color = 0;
                             draw_cnt++;
@@ -496,17 +497,95 @@ void PlayerBoardWnd::PaintBoardGrid(CDCHandle & dc, CDC & dcMem, CPoint & ptBoar
 }
 
 void PlayerBoardWnd::PaintBoardArrow(CDCHandle & dc, Gdiplus::Image * pImage, CPoint & ptBoardBg,
-                                     UINT x, UINT y, int arrow, bool is_opposite)
+                                     UINT x, UINT y, int arrow, int opp_arrow, bool is_opposite)
 {
     ATLASSERT(pImage != NULL);
-    ATLASSERT(arrow >= Direction::First && arrow < Direction::Last);
+    ATLASSERT(arrow >= 0 && arrow < MAX_DIR);
 
-    Gdiplus::Rect rcDest, rcSrc;
+#if 1
+    Gdiplus::Rect rcDest;
     rcDest.X = ptBoardBg.x + nArrowsOffsetX + x * (nArrowsWidth - 1);
     rcDest.Y = ptBoardBg.y + nArrowsOffsetY + y * (nArrowsHeight - 1);
     rcDest.Width = nArrowsWidth;
     rcDest.Height = nArrowsHeight - 1;
 
+    if (arrow == Direction::Down) {
+        std::swap(arrow, opp_arrow);
+        rcDest.Y += (nArrowsHeight - 1) / 2;
+    }
+    else if (arrow == Direction::Left) {
+        rcDest.X -= (nArrowsWidth - 1) / 2;
+    }
+    else if (arrow == Direction::Up) {
+        rcDest.Y -= (nArrowsHeight - 1) / 2;
+    }
+    else if (arrow == Direction::Right) {
+        std::swap(arrow, opp_arrow);
+        rcDest.X += (nArrowsWidth - 1) / 2;
+    }
+
+    Gdiplus::Rect rcSrc1;
+    rcSrc1.X = nArrowsLeft + arrow * (nArrowsWidth + nArrowsInterval);
+    rcSrc1.Y = nArrowsTop;
+    rcSrc1.Width = nArrowsWidth;
+    rcSrc1.Height = nArrowsHeight - 1;
+
+    Gdiplus::Rect rcSrc2;
+    rcSrc2.X = nArrowsLeft + opp_arrow * (nArrowsWidth + nArrowsInterval);
+    rcSrc2.Y = nArrowsTop;
+    rcSrc2.Width = nArrowsWidth;
+    rcSrc2.Height = nArrowsHeight - 1;
+    
+    Gdiplus::Graphics graphics(dc.m_hDC);
+    Gdiplus::Status status;
+    if (!is_opposite) {
+        status = graphics.DrawImage(pImage, rcDest, rcSrc1.X, rcSrc1.Y,
+                                    rcSrc1.Width, rcSrc1.Height, Gdiplus::UnitPixel);
+    }
+    else {
+        if (arrow == Direction::Up) {
+            int nUpHeight = rcDest.Height / 2;
+            rcDest.Height = nUpHeight;
+            rcSrc1.Height = nUpHeight;
+            status = graphics.DrawImage(pImage, rcDest, rcSrc1.X, rcSrc1.Y,
+                                        rcSrc1.Width, rcSrc1.Height, Gdiplus::UnitPixel);
+
+            int nDownHeight = nArrowsHeight - 1 - nUpHeight;
+            rcDest.Y += nUpHeight;
+            rcSrc2.Y += nUpHeight;
+            rcDest.Height = nDownHeight;
+            rcSrc2.Height = nDownHeight;
+            status = graphics.DrawImage(pImage, rcDest, rcSrc2.X, rcSrc2.Y,
+                                        rcSrc2.Width, rcSrc2.Height, Gdiplus::UnitPixel);
+        }
+        else if (arrow == Direction::Left) {
+            int nLeftWidth = rcDest.Width / 2;
+            rcDest.Width = nLeftWidth;
+            rcSrc1.Width = nLeftWidth;
+            status = graphics.DrawImage(pImage, rcDest, rcSrc1.X, rcSrc1.Y,
+                                        rcSrc1.Width, rcSrc1.Height, Gdiplus::UnitPixel);
+
+            int nRightWidth = nArrowsWidth - nLeftWidth;
+            rcDest.X += nLeftWidth;
+            rcSrc2.X += nLeftWidth;
+            rcDest.Width = nRightWidth;
+            rcSrc2.Width = nRightWidth;
+            status = graphics.DrawImage(pImage, rcDest, rcSrc2.X, rcSrc2.Y,
+                                        rcSrc2.Width, rcSrc2.Height, Gdiplus::UnitPixel);
+        }
+        else {
+            assert(false);
+        }
+    }
+#else
+
+    Gdiplus::Rect rcDest;
+    rcDest.X = ptBoardBg.x + nArrowsOffsetX + x * (nArrowsWidth - 1);
+    rcDest.Y = ptBoardBg.y + nArrowsOffsetY + y * (nArrowsHeight - 1);
+    rcDest.Width = nArrowsWidth;
+    rcDest.Height = nArrowsHeight - 1;
+
+    Gdiplus::Rect rcSrc;
     rcSrc.X = nArrowsLeft + arrow * (nArrowsWidth + nArrowsInterval);
     rcSrc.Y = nArrowsTop;
     rcSrc.Width = nArrowsWidth;
@@ -548,6 +627,7 @@ void PlayerBoardWnd::PaintBoardArrow(CDCHandle & dc, Gdiplus::Image * pImage, CP
     Gdiplus::Graphics graphics(dc.m_hDC);
     Gdiplus::Status status = graphics.DrawImage(pImage, rcDest, rcSrc.X, rcSrc.Y,
                                                 rcSrc.Width, rcSrc.Height, Gdiplus::UnitPixel);
+#endif
 }
 
 HitInfo PlayerBoardWnd::OnHitTest(const CRect & rect, const CPoint & point)
@@ -615,7 +695,7 @@ BOOL PlayerBoardWnd::MoveBoardBlock(const CRect & rect, int index, BOOL bRepaint
         int x1 = index % BoardY;
         int y1 = index / BoardY;
         std::lock_guard<std::mutex> lock(this->m_pData->uiMutex);
-        for (int dir = Direction::First; dir < Direction::Last; dir++) {
+        for (int dir = 0; dir < MAX_DIR; dir++) {
             int x2 = x1 + Dir_Offset[dir].x;
             if (x2 < 0 || x2 >= BoardX)
                 continue;
@@ -629,12 +709,11 @@ BOOL PlayerBoardWnd::MoveBoardBlock(const CRect & rect, int index, BOOL bRepaint
 
                 MoveInfo move_info;
                 move_info.from_pos = index;
-                move_info.move_to_pos = move_to;
+                move_info.move_pos = move_to;
                 move_info.color = this->m_pData->playerBoard.grids[index];
                 move_info.dir = dir;
                 this->m_pData->move_path.push_back(move_info);
 
-                lock.~lock_guard();
                 InvalidateRect(rect, bRepaint);
                 break;
             }

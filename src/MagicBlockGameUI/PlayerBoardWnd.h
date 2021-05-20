@@ -80,7 +80,7 @@ protected:
     void PaintBoardGrid(CDCHandle & dc, CDC & dcMem, CPoint & ptBoardBg,
                         UINT x, UINT y, UINT grid);
     void PaintBoardArrow(CDCHandle & dc, Gdiplus::Image * pImage, CPoint & ptBoardBg,
-                         UINT x, UINT y, int arrow, bool is_opposite);
+                         UINT x, UINT y, int arrow, int opp_arrow, bool is_opposite);
 
     BOOL MoveBoardBlock(const CRect & rect, int index, BOOL bRepaint = TRUE);
 
