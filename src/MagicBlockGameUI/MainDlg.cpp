@@ -91,13 +91,14 @@ BOOL CMainDlg::CreateBoardWnd()
     this->m_data.parent = this->m_hWnd;
 
     DWORD dwExStyle = WS_EX_TOOLWINDOW;
+    //dwExStyle = WS_EX_APPWINDOW;
 
     if (targetBoardWnd_ == NULL) {
         targetBoardWnd_ = new TargetBoardWnd(&this->m_data);
         if (targetBoardWnd_ != NULL) {
             CRect rcTargetWnd = { 0, 0, 310, 420 };
             targetBoardWnd_->Create(this->m_hWnd, rcTargetWnd, _T("Ä¿±ê×´Ì¬"),
-                WS_CHILD | WS_OVERLAPPED | WS_GROUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                WS_CHILD | WS_GROUP | WS_TABSTOP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                 dwExStyle);
         }
     }
@@ -107,7 +108,7 @@ BOOL CMainDlg::CreateBoardWnd()
         if (playerBoardWnd_ != NULL) {
             CRect rcPlayerWnd = { 0, 0, 480, 585 };
             playerBoardWnd_->Create(this->m_hWnd, rcPlayerWnd, _T("Íæ¼ÒÆåÅÌ"),
-                WS_CHILD | WS_OVERLAPPED | WS_GROUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                WS_CHILD | WS_GROUP | WS_TABSTOP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                 dwExStyle);
         }
     }
@@ -124,7 +125,7 @@ BOOL CMainDlg::CreateSimpleToolBar(UINT nResourceID, DWORD dwStyle, UINT nID)
         if (m_pSkinToolbar != NULL) {
             CRect rcToolbar = { 0, 0, 400, 25 };
             m_pSkinToolbar->Create(this->m_hWnd, rcToolbar, _T("ToolBar"),
-                WS_CHILD | WS_OVERLAPPED | WS_GROUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+                WS_CHILD | WS_GROUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
                 dwExStyle);
             m_pSkinToolbar->AddItem(0, STBI_STYLE_BUTTON);
             m_pSkinToolbar->SetItemText(0, _T("111111"));
@@ -314,6 +315,12 @@ LRESULT CMainDlg::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 	pLoop->RemoveIdleHandler(this);
 
 	return 0;
+}
+
+LRESULT CMainDlg::OnEraseBackground(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL & bHandled)
+{
+    bHandled = false;
+	return 0;   // no background painting needed
 }
 
 LRESULT CMainDlg::OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL & /*bHandled*/)

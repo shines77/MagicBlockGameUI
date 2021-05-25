@@ -107,5 +107,5 @@ private:
     CEdit m_editTargetString;
 
     HBRUSH m_hBrushBG;
-    DWORD m_dwLastBringTick;
+    DWORD  m_dwLastBringTick;
 };

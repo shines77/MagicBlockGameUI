@@ -56,18 +56,25 @@ public:
 
 public:
     CSkinWndImpl()
-        : m_bSkinActive(TRUE),
+        : m_hCursorArrow(NULL),
+          m_hCursorSizeAll(NULL),
+          m_bSkinActive(TRUE),
           m_bSkinLMouseMoving(FALSE),
+          m_bSkinLMouseFirstMoving(FALSE),
           m_clrTitleActive(nCaptionTextActiveColor),
           m_clrTitleNonActive(nCaptionTextNonActiveColor),
           m_hSkinCaptionBGActiveBrush(NULL),
           m_hSkinCaptionBGNonActiveBrush(NULL),
           m_bSkinLMouseDown(FALSE),
-          m_ptSkinLMouseDown(0, 0),
-          m_rcSkinLMouseDown(0, 0, 0, 0) {
+          m_ptLMouseDownStart(0, 0),
+          m_rcLMouseDownStart(0, 0, 0, 0) {
+        m_hCursorArrow   = ::LoadCursor(NULL, IDC_ARROW);
+        m_hCursorSizeAll = ::LoadCursor(NULL, IDC_SIZEALL);
+
         // Caption BG brush
         m_hSkinCaptionBGActiveBrush = ::CreateSolidBrush(nCaptionBGActiveColor);
         m_hSkinCaptionBGNonActiveBrush = ::CreateSolidBrush(nCaptionBGNonActiveColor);
+
         // Nice palace resource
         m_bmpSkinScale9PSprite.LoadBitmap(IDB_BITMAP_BTN_SCALE9PSPRITE_GRAY);
 
@@ -209,13 +216,13 @@ public:
 		        dc.SetTextColor(m_clrTitleActive);
 	        else
 		        dc.SetTextColor(m_clrTitleNonActive);
-
+#if 0
             TCHAR szText[128];
             _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
                          _T("(%u) SkinWnd_DrawTitle(): hWnd = 0x%p, m_bSkinActive = %d\n"),
                          GetTickCount(), this->GetSafeHwnd(), m_bSkinActive);
             ::OutputDebugString(szText);
-
+#endif
             CFont font;
 	        font.CreatePointFont(::GetSystemMetrics(SM_CYSMCAPTION), _T("System"));
             HFONT pOldFont = dc.SelectFont(font.m_hFont);
@@ -238,7 +245,9 @@ public:
     }
 
     void SkinWnd_DrawBackgroud(CDCHandle dc, CDCHandle dcMem, CRect & rect) {
-        this->m_skinScale9PSprite.DrawBackgroud(dc, dcMem, rect);
+        if (1) {
+            this->m_skinScale9PSprite.DrawBackgroud(dc, dcMem, rect);
+        }
     }
 
     void SkinWnd_DrawFrame(CDC & dc, CDC & dcMem, CRect & rect) {
@@ -250,7 +259,9 @@ public:
     }
 
     void SkinWnd_DrawFrame(CDCHandle dc, CDCHandle dcMem, CRect & rect) {
-        this->m_skinScale9PSprite.DrawFrame(dc, dcMem, rect);
+        if (1) {
+            this->m_skinScale9PSprite.DrawFrame(dc, dcMem, rect);
+        }
         this->SkinWnd_DrawTitle(dc, dcMem, rect);
     }
 
@@ -299,20 +310,92 @@ public:
         ::OutputDebugString(szText);
     }
 
+    bool GetScreenOffset(HWND hWnd, CPoint & ptScreen, CPoint & ptParentScreen) {
+        bool success;
+        if (::ClientToScreen(hWnd, &ptScreen)) {
+            CPoint ptParentOffset;
+            HWND hwndParent = ::GetParent(hWnd);
+            while (hwndParent != NULL) {
+                CPoint ptOffset;
+                if (::ClientToScreen(hwndParent, &ptOffset)) {
+                    ptParentOffset.Offset(ptOffset);
+                    hwndParent = ::GetParent(hwndParent);
+                }
+                else {
+                    break;
+                }
+            }
+            ptParentScreen = ptParentOffset;
+            success = true;
+        }
+        else {
+            ptScreen.x = 0;
+            ptScreen.y = 0;
+            ptParentScreen.x = 0;
+            ptParentScreen.y = 0;
+            success = false;
+        }
+        return success;
+    }
+
     void SkinWnd_OnLButtonDown(UINT nFlags, CPoint point) {
         CRect rcTitle;
         if (this->GetCaptionRect(rcTitle)) {
             if (::PtInRect(&rcTitle, point)) {
                 if (!m_bSkinLMouseDown) {
-                    if (::SetCapture(this->GetSafeHwnd()) == NULL) {
-                        m_bSkinLMouseDown = TRUE;
-                        ::SetCursor(::LoadCursor(NULL, IDC_SIZEALL));
-                        //::SendMessage(this->GetSafeHwnd(), WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
-                        CRect rcWin;
-                        if (::GetWindowRect(this->GetSafeHwnd(), &rcWin)) {
-                            m_rcSkinLMouseDown = rcWin;
-                            m_ptSkinLMouseDown = point;
+                    CPoint ptStart = point;
+                    CPoint ptAbsoluteStart = point;
+                    CRect rcStart;
+                    if (::GetWindowRect(this->GetSafeHwnd(), &rcStart)) {
+                        CPoint ptScreen, ptParentScreen;
+                        if (this->GetScreenOffset(this->GetSafeHwnd(), ptScreen, ptParentScreen)) {
+                            ptAbsoluteStart = ptScreen;
+                            ptAbsoluteStart += ptParentScreen;
+                            ptAbsoluteStart += point;
                         }
+                        m_ptParentScreen = ptParentScreen;
+#if 0
+                        TCHAR szText[128];
+                        OutputDebugString(_T("-----------------------------------------------\n"));
+                        _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                     _T("(%u) SkinWnd_OnLButtonDown(): m_ptParentScreen = (%d, %d)\n"),
+                                     ::GetTickCount(), (int)m_ptParentScreen.x, (int)m_ptParentScreen.y);
+                        OutputDebugString(szText);
+                        _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                     _T("(%u) SkinWnd_OnLButtonDown(): point = (%d, %d)\n"),
+                                     ::GetTickCount(), (int)point.x, (int)point.y);
+                        OutputDebugString(szText);
+                        _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                     _T("(%u) SkinWnd_OnLButtonDown(): ptScreen = (%d, %d)\n"),
+                                     ::GetTickCount(), (int)ptScreen.x, (int)ptScreen.y);
+                        OutputDebugString(szText);
+                        _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                     _T("(%u) SkinWnd_OnLButtonDown(): ptStart = (%d, %d)\n"),
+                                     ::GetTickCount(), (int)ptStart.x, (int)ptStart.y);
+                        OutputDebugString(szText);
+                        _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                     _T("(%u) SkinWnd_OnLButtonDown(): ptAbsoluteStart = (%d, %d)\n"),
+                                     ::GetTickCount(), (int)ptAbsoluteStart.x, (int)ptAbsoluteStart.y);
+                        OutputDebugString(szText);
+                        _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                     _T("(%u) SkinWnd_OnLButtonDown(): rcStart = (%d, %d)\n"),
+                                     ::GetTickCount(), (int)rcStart.left, (int)rcStart.top);
+                        OutputDebugString(szText);
+                        OutputDebugString(_T("-----------------------------------------------\n"));
+#endif
+                        m_ptLMouseDownStart = ptStart;
+                        m_ptLMouseDownAbsStart = ptAbsoluteStart;
+                        m_rcLMouseDownStart = rcStart;
+                    }
+                    else {
+                        return;
+                    }
+                    m_bSkinLMouseDown = TRUE;
+                    m_bSkinLMouseFirstMoving = TRUE;
+                    //::SendMessage(this->GetSafeHwnd(), WM_NCLBUTTONDOWN, HTCAPTION, MAKELPARAM(point.x, point.y));
+                    HWND hwndSaveCapture = ::SetCapture(this->GetSafeHwnd());
+                    if (hwndSaveCapture == NULL) {
+                        ::SetCursor(m_hCursorSizeAll);
                         if (!this->m_bSkinActive) {
                             this->SkinWnd_UpdateTitle();
                         }
@@ -324,68 +407,116 @@ public:
     }
 
     void SkinWnd_OnLButtonUp(UINT nFlags, CPoint point) {
+        bool lockReleased = false;
         if (m_bSkinLMouseDown) {
             if (::ReleaseCapture()) {
-                m_bSkinLMouseDown = FALSE;
-                ::SetCursor(::LoadCursor(NULL, IDC_ARROW));
+                ::SetCursor(m_hCursorArrow);
             }
+            m_bSkinLMouseFirstMoving = FALSE;
+            m_bSkinLMouseDown = FALSE;
         }
     }
 
     void SkinWnd_OnMouseMove(UINT nFlags, CPoint point) {
-        if (m_bSkinLMouseDown) {
-            if ((nFlags & MK_LBUTTON) == MK_LBUTTON) {
-                if (point != m_ptSkinLMouseDown) {
-                    //CRect rcWin;
-                    //if (::GetWindowRect(this->GetSafeHwnd(), &rcWin))
+        if ((nFlags & MK_LBUTTON) == MK_LBUTTON) {
+            try {
+                if (m_bSkinLMouseDown) {
                     if (!m_bSkinLMouseMoving) {
+                        CPoint ptScreen;
+                        CPoint ptMoveTo = point;
+                        CPoint ptAbsoluteMoveTo = point;
+                        if (::ClientToScreen(this->GetSafeHwnd(), &ptScreen)) {
+                            ptAbsoluteMoveTo.Offset(ptScreen);
+                            ptAbsoluteMoveTo.Offset(m_ptParentScreen);
+                        }
+                        CPoint ptOffset = ptMoveTo - m_ptLMouseDownStart;
+                        CPoint ptAbsoluteOffset = ptAbsoluteMoveTo - m_ptLMouseDownAbsStart;
+                        CRect rcMoveTo = m_rcLMouseDownStart;
+                        rcMoveTo.OffsetRect(ptAbsoluteOffset);
+                        rcMoveTo.OffsetRect(-m_ptParentScreen.x, -m_ptParentScreen.y);
+#if 0
+                        if (m_bSkinLMouseFirstMoving) {
+                            TCHAR szText[128];
+                            _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                         _T("(%u) SkinWnd_OnMouseMove(): point = (%d, %d)\n"),
+                                         ::GetTickCount(), (int)point.x, (int)point.y);
+                            OutputDebugString(szText);
+                            _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                         _T("(%u) SkinWnd_OnMouseMove(): ptScreen = (%d, %d)\n"),
+                                         ::GetTickCount(), (int)ptScreen.x, (int)ptScreen.y);
+                            OutputDebugString(szText);
+                            _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                         _T("(%u) SkinWnd_OnMouseMove(): ptOffset = (%d, %d)\n"),
+                                         ::GetTickCount(), (int)ptOffset.x, (int)ptOffset.y);
+                            OutputDebugString(szText);
+                            _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                         _T("(%u) SkinWnd_OnMouseMove(): ptAbsoluteOffset = (%d, %d)\n"),
+                                         ::GetTickCount(), (int)ptAbsoluteOffset.x, (int)ptAbsoluteOffset.y);
+                            OutputDebugString(szText);
+                            _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
+                                         _T("(%u) SkinWnd_OnMouseMove(): rcMoveTo = (%d, %d)\n"),
+                                         ::GetTickCount(), (int)rcMoveTo.left, (int)rcMoveTo.top);
+                            OutputDebugString(szText);
+                            OutputDebugString(_T("-----------------------------------------------\n"));
+                            //m_bSkinLMouseFirstMoving = FALSE;
+                        }
+#endif
                         m_bSkinLMouseMoving = TRUE;
-                        CPoint offset = point - m_ptSkinLMouseDown;
-                        CRect rcWin = m_rcSkinLMouseDown;
-                        rcWin.OffsetRect(offset);
 #if 0
                         TCHAR szText[128];
                         _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
-                                     _T("OnMouseMove(): point.x = %ld, point.y = %ld\n"), point.x, point.y);
+                                        _T("OnMouseMove(): point.x = %ld, point.y = %ld\n"), point.x, point.y);
                         ::OutputDebugString(szText);
                         _sntprintf_s(szText, _countof(szText) - 1, _countof(szText),
-                                     _T("OnMouseMove(): offset.x = %ld, offset.y = %ld\n\n"), offset.x, offset.y);
+                                        _T("OnMouseMove(): offset.x = %ld, offset.y = %ld\n\n"), offset.x, offset.y);
                         ::OutputDebugString(szText);
 #endif
+                        if (m_bSkinLMouseFirstMoving) {
+                            m_bSkinLMouseDown = FALSE;
+                            //m_bSkinLMouseFirstMoving = FALSE;
+                        }
 #if 1
                         if (::SetWindowPos(this->GetSafeHwnd(), NULL,
-                                           rcWin.left,
-                                           rcWin.top,
+                                           rcMoveTo.left,
+                                           rcMoveTo.top,
                                            0, 0,
                                            SWP_NOSIZE)) {
-                            m_rcSkinLMouseDown = rcWin;
+                            //m_rcLMouseDownStart = rcMoveTo;
                             m_bSkinLMouseMoving = FALSE;
+                            m_bSkinLMouseDown = TRUE;
                             return;
                         }
 #else
-                        if (::MoveWindow(this->GetSafeHwnd(), rcWin.left, rcWin.top,
-                                         rcWin.Width(), rcWin.Height(), TRUE)) {
-                            m_rcSkinLMouseDown = rcWin;
+                        if (::MoveWindow(this->GetSafeHwnd(), rcMoveTo.left, rcMoveTo.top,
+                                         rcMoveTo.Width(), rcMoveTo.Height(), TRUE)) {
+                            //m_rcLMouseDownStart = rcMoveTo;
                             m_bSkinLMouseMoving = FALSE;
+                            m_bSkinLMouseDown = TRUE;
                             return;
                         }
 #endif
-                        m_bSkinLMouseMoving = FALSE;
+                    }
+                    else {
+                        return;
                     }
                 }
-                else {
-                    return;
-                }
+            }
+            catch (const std::exception & ex) {
+                std::string err_info = "Exception: ";
+                err_info += std::string(ex.what());
+                OutputDebugStringA(err_info.c_str());
+                MessageBoxA(this->GetSafeHwnd(), err_info.c_str(), "Magic Block", MB_ICONINFORMATION | MB_OK);
             }
         }
-
-        //m_ptSkinLMouseDown = point;
     }
 
 protected:
     //
 
 private:
+    HCURSOR      m_hCursorArrow;
+    HCURSOR      m_hCursorSizeAll;
+
     BOOL         m_bSkinActive;
     COLORREF     m_clrTitleActive;
     COLORREF     m_clrTitleNonActive;
@@ -395,8 +526,12 @@ private:
 
     BOOL         m_bSkinLMouseDown;
     BOOL         m_bSkinLMouseMoving;
-    CPoint       m_ptSkinLMouseDown;
-    CRect        m_rcSkinLMouseDown;
+    BOOL         m_bSkinLMouseFirstMoving;
+
+    CPoint       m_ptLMouseDownStart;
+    CPoint       m_ptLMouseDownAbsStart;
+    CPoint       m_ptParentScreen;
+    CRect        m_rcLMouseDownStart;
 
     CBitmap      m_bmpSkinScale9PSprite;
     Scale9Sprite m_skinScale9PSprite;
